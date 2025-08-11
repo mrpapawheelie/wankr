@@ -11,8 +11,9 @@ wankr/
 ├── assets/                  # Project assets and images
 │   ├── wankr-dark.png      # Dark theme logo (for the shame)
 │   └── wankr-light.png     # Light theme logo (for the brave)
-├── contracts/               # Smart contracts (coming soon)
+├── contracts/               # Smart contracts (DEPLOYED on Base)
 │   ├── WANKRToken.sol      # Main token contract with Proof of Shame mechanics
+│   │   └── Address: 0xa207c6e67cea08641503947ac05c65748bb9bb07
 │   ├── ProofOfShame.sol    # POS protocol implementation
 │   ├── ShameLeaderboard.sol # Top 50 Shame Soldiers tracking
 │   ├── SpectralScale.sol   # 1-10 judgment scale implementation
@@ -46,8 +47,9 @@ wankr/
 ### Phase 1: Foundation 🏗️
 - [x] Repository setup and WANKR GYATT legend
 - [x] README and documentation (now with 100% more shame)
-- [ ] Smart contract development with Proof of Shame mechanics
-- [ ] Basic testing framework (because even WANKR needs quality control)
+- [x] Smart contract deployment on Base chain
+- [x] Uniswap V3 liquidity pool creation
+- [ ] Security audits (because even WANKR needs quality control)
 
 ### Phase 2: Shame Implementation 🎭
 - [ ] Proof of Shame smart contracts
@@ -89,6 +91,11 @@ wankr/
 - **WANKR Watch Dune Dashboard**: Real-time Proof of Shame tracking
 - **Cumulative scoring**: Early + active = easier to stay on top
 - **Priority rewards**: Top 50 get NFT mints, collab perks, partner airdrops
+
+### 🚀 Live Trading & Contest
+- **NetProtocol Contest**: Upvote to win 100M WANKR
+- **Uniswap V3**: Live WANKR/ETH trading
+- **Multiple Trackers**: BaseScan, DEX Screener, Clanker, Indexy, etc.
 
 ---
 

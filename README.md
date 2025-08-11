@@ -52,6 +52,27 @@ A vote of no confidence, delivered with gas and giggles.
 
 There is no DAO. Only shame. Only WANKR.
 
+## 🚀 Live Trading & Contest
+
+### 🎯 **NetProtocol Contest - Win 100 Million WANKR!**
+- **Upvote WANKR** on [NetProtocol](https://www.netprotocol.app/app/token/base/0xa207c6e67cea08641503947ac05c65748bb9bb07)
+- **Upvotes give you WANKR and ALPHA**
+- **1000 upvotes = 0.025 ETH = 1 contest entry**
+- **Random draw for 100,000,000 WANKR prize!**
+
+### 💰 **Trade WANKR**
+- **Uniswap V3**: [Trade WANKR/ETH](https://app.uniswap.org/explore/tokens/base/0xa207c6e67cea08641503947ac05c65748bb9bb07)
+- **Liquidity Pool**: [WANKR/ETH Pool](https://app.uniswap.org/explore/pools/base/0x888AC1fF2De3e880004765A7667f95e494f82C44)
+- **DEX Screener**: [Live Charts](https://dexscreener.com/base/0xa207C6E67ceA08641503947Ac05c65748bb9bB07)
+
+### 📊 **Track WANKR**
+- **BaseScan**: [Contract Explorer](https://basescan.org/token/0xa207c6e67cea08641503947ac05c65748bb9bb07)
+- **Clanker**: [Profile Page](https://www.clanker.world/clanker/0xa207C6E67ceA08641503947Ac05c65748bb9bB07)
+- **Indexy**: [Growth Tracking](https://indexy.xyz/index/743)
+- **Nounsspace**: [Profile](https://www.nounspace.com/t/base/0xa207C6E67ceA08641503947Ac05c65748bb9bB07/Profile)
+- **Interface**: [Social Token](https://app.interface.social/token/8453/0xa207C6E67ceA08641503947Ac05c65748bb9bB07)
+- **Defined.fi**: [Analytics](https://www.defined.fi/base/0x888ac1ff2de3e880004765a7667f95e494f82c44?quoteToken=token1&cache=4cfa0)
+
 ## 🛠️ Technology Stack
 
 - **Blockchain**: Base chain (where legends are born)
@@ -65,7 +86,8 @@ There is no DAO. Only shame. Only WANKR.
 ### Phase 1: Foundation 🏗️
 - [x] Repository setup and WANKR GYATT legend
 - [x] README and documentation (now with 100% more shame)
-- [ ] Smart contract development with Proof of Shame mechanics
+- [x] Smart contract deployment on Base chain
+- [x] Uniswap V3 liquidity pool
 - [ ] Security audits (because even WANKR needs to be secure)
 - [ ] Testnet deployment on Base
 
@@ -74,6 +96,7 @@ There is no DAO. Only shame. Only WANKR.
 - [ ] Top 50 Shame Soldiers leaderboard
 - [ ] Spectral judgment scale (1-10)
 - [ ] Anti-engagement farming deterrents
+- [ ] 10 $WANKR standard send mechanics
 
 ### Phase 3: Frontend & Launch 🚀
 - [ ] Simple WANKR site (for listings + hub)
@@ -96,10 +119,13 @@ There is no DAO. Only shame. Only WANKR.
 - **Twitter**: Coming Soon
 - **Discord**: Coming Soon
 - **Dune Dashboard**: [WANKR Watch](https://dune.com/mrpapawheelie/wankr-watch) (Proof of Shame tracking)
+- **X Thread**: [BankrBot Creates WANKR](https://x.com/bankrbot/status/1952905227457446027)
 
 ## 📊 Tokenomics
 
-- **Total Supply**: TBA (but definitely not 69)
+- **Total Supply**: 100,000,000,000 WANKR
+- **Contract**: `0xa207c6e67cea08641503947ac05c65748bb9bb07`
+- **Decimals**: 18
 - **Initial Price**: TBA (probably too high for what you deserve)
 - **Vesting Schedule**: TBA (instant gratification for instant shame)
 - **Allocation**: TBA (mostly to people who need it most)
