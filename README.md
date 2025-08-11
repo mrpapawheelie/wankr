@@ -16,7 +16,7 @@ He grew not in wisdom, but in weaponry.
 
 WANKR is a **POS protocol**. And if you just snickered "piece of sh*t," cut it out and pay attention.
 
-**Here, POS = Proof of Shame** — tracked on the WANKR Watch Dune dashboard (running, cumulative leaderboard).
+**Here, POS = Proof of Shame** — tracked on the [WANKR Watch Dune dashboard](https://dune.com/mrpapawheelie/wankr-watch) (running, cumulative leaderboard).
 
 ## 🎯 How It Works
 
@@ -58,7 +58,7 @@ There is no DAO. Only shame. Only WANKR.
 - **Smart Contracts**: Solidity-based with built-in shame mechanics
 - **Frontend**: Modern web3 interface for maximum WANKR distribution
 - **Backend**: Decentralized infrastructure powered by pure spite
-- **Analytics**: WANKR Watch Dune dashboard for Proof of Shame tracking
+- **Analytics**: [WANKR Watch Dune dashboard](https://dune.com/mrpapawheelie/wankr-watch) for Proof of Shame tracking
 
 ## 📋 Roadmap
 
@@ -95,7 +95,7 @@ There is no DAO. Only shame. Only WANKR.
 - **Telegram**: Coming Soon
 - **Twitter**: Coming Soon
 - **Discord**: Coming Soon
-- **Dune Dashboard**: WANKR Watch (Proof of Shame tracking)
+- **Dune Dashboard**: [WANKR Watch](https://dune.com/mrpapawheelie/wankr-watch) (Proof of Shame tracking)
 
 ## 📊 Tokenomics
 
