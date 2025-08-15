@@ -1,0 +1,48 @@
+{
+  "name": "wankr",
+  "version": "1.0.0",
+  "description": "> **The Unholy Birth of WANKR GYATT** - Base chain's least expected antihero",
+  "main": "dist/server.js",
+  "directories": {
+    "doc": "docs",
+    "test": "test"
+  },
+  "scripts": {
+    "dev": "nodemon src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "format": "prettier --write src/**/*.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Alcb4/wankr.git"
+  },
+  "keywords": ["wankr", "crypto", "token", "base", "blockchain", "meme"],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Alcb4/wankr/issues"
+  },
+  "homepage": "https://github.com/Alcb4/wankr#readme",
+  "dependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.3.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
+    "ethers": "^6.15.0",
+    "express": "^5.1.0",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.39.1",
+    "@typescript-eslint/parser": "^8.39.1",
+    "eslint": "^9.33.0",
+    "prettier": "^3.6.2"
+  }
+}

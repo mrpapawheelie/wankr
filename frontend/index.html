@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WANKR - The Dark Mirror of the Base Chain</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+      
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
+      body {
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+        color: #ffffff;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+      
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+      
+      .header {
+        text-align: center;
+        margin-bottom: 3rem;
+      }
+      
+      .header h1 {
+        font-size: 3.5rem;
+        font-weight: 700;
+        background: linear-gradient(45deg, #ff6b6b, #ff8e53, #ff6b6b);
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: gradient 3s ease infinite;
+        margin-bottom: 1rem;
+      }
+      
+      @keyframes gradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+      }
+      
+      .header p {
+        font-size: 1.2rem;
+        color: #a0a0a0;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+      
+      .main-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-bottom: 3rem;
+      }
+      
+      .card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 2rem;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+      }
+      
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      }
+      
+      .card h2 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: #ff6b6b;
+      }
+      
+      .connect-wallet {
+        background: linear-gradient(45deg, #ff6b6b, #ff8e53);
+        border: none;
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: 100%;
+        margin-bottom: 1rem;
+      }
+      
+      .connect-wallet:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
+      }
+      
+      .connect-wallet:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+      
+      .wallet-info {
+        background: rgba(255, 107, 107, 0.1);
+        border: 1px solid rgba(255, 107, 107, 0.3);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+      
+      .wallet-info h3 {
+        color: #ff6b6b;
+        margin-bottom: 0.5rem;
+      }
+      
+      .address {
+        font-family: 'Courier New', monospace;
+        background: rgba(0, 0, 0, 0.3);
+        padding: 0.5rem;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        word-break: break-all;
+      }
+      
+      .balance {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #ff8e53;
+      }
+      
+      .shame-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      
+      .form-group label {
+        font-weight: 500;
+        color: #a0a0a0;
+      }
+      
+      .form-group input, .form-group textarea {
+        padding: 0.75rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.05);
+        color: white;
+        font-size: 1rem;
+      }
+      
+      .form-group input:focus, .form-group textarea:focus {
+        outline: none;
+        border-color: #ff6b6b;
+        box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.2);
+      }
+      
+      .deliver-shame {
+        background: linear-gradient(45deg, #ff4757, #ff3742);
+        border: none;
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      
+      .deliver-shame:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(255, 71, 87, 0.3);
+      }
+      
+      .deliver-shame:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+      
+      .leaderboard {
+        grid-column: 1 / -1;
+      }
+      
+      .leaderboard h2 {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+      
+      .shame-soldiers {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1rem;
+      }
+      
+      .soldier-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      
+      .soldier-rank {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #ff6b6b;
+        min-width: 40px;
+      }
+      
+      .soldier-info {
+        flex: 1;
+        margin-left: 1rem;
+      }
+      
+      .soldier-address {
+        font-family: 'Courier New', monospace;
+        font-size: 0.9rem;
+        color: #a0a0a0;
+        margin-bottom: 0.25rem;
+      }
+      
+      .soldier-shame {
+        font-weight: 600;
+        color: #ff8e53;
+      }
+      
+      .loading {
+        text-align: center;
+        color: #a0a0a0;
+        font-style: italic;
+      }
+      
+      .error {
+        background: rgba(255, 71, 87, 0.1);
+        border: 1px solid rgba(255, 71, 87, 0.3);
+        border-radius: 8px;
+        padding: 1rem;
+        color: #ff4757;
+        margin-bottom: 1rem;
+      }
+      
+      .success {
+        background: rgba(46, 213, 115, 0.1);
+        border: 1px solid rgba(46, 213, 115, 0.3);
+        border-radius: 8px;
+        padding: 1rem;
+        color: #2ed573;
+        margin-bottom: 1rem;
+      }
+      
+      @media (max-width: 768px) {
+        .main-content {
+          grid-template-columns: 1fr;
+        }
+        
+        .header h1 {
+          font-size: 2.5rem;
+        }
+        
+        .container {
+          padding: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🚀 WANKR</h1>
+        <p>The Dark Mirror of the Base Chain - Where BankerBot optimized trades, WANKR GYATT optimized shame.</p>
+      </div>
+      
+      <div class="main-content">
+        <div class="card">
+          <h2>🔗 Connect Wallet</h2>
+          <button id="connectWallet" class="connect-wallet">Connect MetaMask</button>
+          <div id="walletInfo" class="wallet-info" style="display: none;">
+            <h3>Connected Wallet</h3>
+            <div id="walletAddress" class="address"></div>
+            <div class="balance">Balance: <span id="wankrBalance">0</span> WANKR</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <h2>🎭 Deliver Shame</h2>
+          <form id="shameForm" class="shame-form">
+            <div class="form-group">
+              <label for="targetAddress">Target Address</label>
+              <input type="text" id="targetAddress" placeholder="0x..." required>
+            </div>
+            <div class="form-group">
+              <label for="shameReason">Reason for Shame</label>
+              <textarea id="shameReason" placeholder="Why are you delivering shame?" rows="3"></textarea>
+            </div>
+            <button type="submit" id="deliverShame" class="deliver-shame" disabled>
+              Deliver 10 WANKR Shame
+            </button>
+          </form>
+        </div>
+        
+        <div class="card leaderboard">
+          <h2>🏆 Top 50 Shame Soldiers</h2>
+          <div id="leaderboard" class="shame-soldiers">
+            <div class="loading">Loading shame soldiers...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
