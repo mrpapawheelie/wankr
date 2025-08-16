@@ -33,7 +33,8 @@ const shameForm = document.getElementById('shameForm') as HTMLFormElement;
 const targetAddressInput = document.getElementById('targetAddress') as HTMLInputElement;
 const shameReasonInput = document.getElementById('shameReason') as HTMLTextAreaElement;
 const deliverShameBtn = document.getElementById('deliverShame') as HTMLButtonElement;
-const leaderboard = document.getElementById('leaderboard') as HTMLDivElement;
+const leaderboardContent = document.getElementById('leaderboardContent') as HTMLDivElement;
+const timePeriodSelect = document.getElementById('timePeriod') as HTMLSelectElement;
 
 // Shame feed elements
 const shameFeed = document.getElementById('shameFeed') as HTMLDivElement;
@@ -59,11 +60,14 @@ async function init() {
     await connectWallet();
   }
   
-  // Load leaderboard
-  loadLeaderboard();
+  // Load leaderboards
+  loadLeaderboards();
   
   // Start live shame feed
   startShameFeed();
+  
+  // Setup leaderboard events
+  setupLeaderboardEvents();
 }
 
 // Connect wallet function
@@ -182,27 +186,87 @@ async function deliverShame(event: Event) {
   }
 }
 
-// Load leaderboard
-async function loadLeaderboard() {
+// Load leaderboards data
+async function loadLeaderboards() {
   try {
-    // For now, we'll show a placeholder since we need to connect to the backend
-    // In a real implementation, this would call the backend API
-    leaderboard.innerHTML = `
-      <div class="loading">
-        <p>Shame leaderboard coming soon...</p>
-        <p>This will show the Top 50 Shame Soldiers ranked by total shame delivered.</p>
-      </div>
-    `;
+    const period = timePeriodSelect.value;
+    const response = await fetch(`http://localhost:3001/api/leaderboards/${period}`);
+    const data = await response.json();
     
-    // TODO: Implement actual leaderboard loading from backend API
-    // const response = await fetch('http://localhost:3001/api/leaderboard');
-    // const data = await response.json();
-    // displayLeaderboard(data.topShameSoldiers);
-    
+    if (data.received && data.sent) {
+      displayLeaderboards(data);
+    } else {
+      leaderboardContent.innerHTML = '<div class="error">Failed to load leaderboard data</div>';
+    }
   } catch (error) {
-    console.error('Error loading leaderboard:', error);
-    leaderboard.innerHTML = '<div class="error">Failed to load leaderboard</div>';
+    console.error('Error loading leaderboards:', error);
+    leaderboardContent.innerHTML = '<div class="error">Failed to load leaderboard data</div>';
   }
+}
+
+// Setup leaderboard event listeners
+function setupLeaderboardEvents() {
+  // Tab switching
+  const tabButtons = document.querySelectorAll('.tab-button');
+  tabButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      // Remove active class from all tabs
+      tabButtons.forEach(btn => btn.classList.remove('active'));
+      // Add active class to clicked tab
+      button.classList.add('active');
+      
+      // Load leaderboards with current period
+      loadLeaderboards();
+    });
+  });
+  
+  // Time period change
+  timePeriodSelect.addEventListener('change', () => {
+    loadLeaderboards();
+  });
+}
+
+// Display leaderboards
+function displayLeaderboards(data: any) {
+  const activeTab = document.querySelector('.tab-button.active')?.getAttribute('data-tab') || 'received';
+  const leaderboard = activeTab === 'received' ? data.received : data.sent;
+  
+  if (!leaderboard || leaderboard.length === 0) {
+    leaderboardContent.innerHTML = '<div class="loading">No data available for this period</div>';
+    return;
+  }
+  
+  const tableHTML = `
+    <table class="leaderboard-table">
+      <thead>
+        <tr>
+          <th>Rank</th>
+          <th>Wallet/Handle</th>
+          <th>Transactions</th>
+          <th>Total WANKR</th>
+          <th>Link</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${leaderboard.map((entry: any) => `
+          <tr>
+            <td class="rank-cell">#${entry.rank}</td>
+            <td class="handle-cell">
+              <span class="handle-name">${entry.displayName}</span>
+              <span class="handle-source">${entry.source}</span>
+            </td>
+            <td class="stats-cell">${entry.transactionCount} tx</td>
+            <td class="amount-cell">${entry.totalWankr} WANKR</td>
+            <td>
+              <a href="https://basescan.org/address/${entry.address}" target="_blank" class="basescan-link">🔗</a>
+            </td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+  
+  leaderboardContent.innerHTML = tableHTML;
 }
 
 // Start live shame feed

@@ -23,7 +23,7 @@
       }
       
       .container {
-        max-width: 1200px;
+        max-width: 1400px;
         margin: 0 auto;
         padding: 2rem;
       }
@@ -31,6 +31,8 @@
       .header {
         text-align: center;
         margin-bottom: 3rem;
+        width: 100%;
+        max-width: 1200px;
       }
       
       .header h1 {
@@ -60,17 +62,17 @@
       
       .wallet-section {
         position: fixed;
-        top: 2rem;
-        right: 2rem;
+        top: 15px;
+        right: 15px;
         z-index: 100;
-        max-width: 300px;
+        max-width: 250px;
       }
       
       .wallet-card {
         background: rgba(255, 255, 255, 0.05);
         border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 16px;
-        padding: 1.5rem;
+        border-radius: 8px;
+        padding: 0.75rem;
         backdrop-filter: blur(10px);
         transition: all 0.3s ease;
       }
@@ -91,16 +93,19 @@
         grid-template-columns: 1fr 1fr;
         gap: 2rem;
         margin-bottom: 3rem;
-        margin-right: 320px; /* Make room for wallet section */
+        margin-right: 280px; /* Reduced room for smaller wallet section */
+        width: 100%;
+        max-width: 1200px;
       }
       
       .card {
         background: rgba(255, 255, 255, 0.05);
         border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 16px;
-        padding: 2rem;
+        padding: 2.5rem;
         backdrop-filter: blur(10px);
         transition: all 0.3s ease;
+        min-height: 400px;
       }
       
       .card:hover {
@@ -142,27 +147,28 @@
       .wallet-info {
         background: rgba(255, 107, 107, 0.1);
         border: 1px solid rgba(255, 107, 107, 0.3);
-        border-radius: 12px;
-        padding: 1rem;
-        margin-bottom: 1rem;
+        border-radius: 8px;
+        padding: 0.5rem;
+        margin-bottom: 0.5rem;
       }
       
       .wallet-info h3 {
         color: #ff6b6b;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.25rem;
+        font-size: 0.8rem;
       }
       
       .address {
         font-family: 'Courier New', monospace;
         background: rgba(0, 0, 0, 0.3);
-        padding: 0.5rem;
-        border-radius: 8px;
-        font-size: 0.9rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
         word-break: break-all;
       }
       
       .balance {
-        font-size: 1.2rem;
+        font-size: 1rem;
         font-weight: 600;
         color: #ff8e53;
       }
@@ -229,6 +235,149 @@
       .leaderboard h2 {
         text-align: center;
         margin-bottom: 2rem;
+      }
+      
+      .leaderboard-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      
+      .leaderboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: 1rem;
+      }
+      
+      .leaderboard-tabs {
+        display: flex;
+        gap: 0.5rem;
+      }
+      
+      .tab-button {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #a0a0a0;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+      }
+      
+      .tab-button:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: #ffffff;
+      }
+      
+      .tab-button.active {
+        background: rgba(255, 107, 107, 0.2);
+        border-color: rgba(255, 107, 107, 0.5);
+        color: #ff6b6b;
+      }
+      
+      .time-period-selector {
+        display: flex;
+        align-items: center;
+      }
+      
+      .period-dropdown {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #ffffff;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 0.9rem;
+      }
+      
+      .period-dropdown:focus {
+        outline: none;
+        border-color: rgba(255, 107, 107, 0.5);
+      }
+      
+      .leaderboard-content {
+        max-height: 400px;
+        overflow-y: auto;
+      }
+      
+      .leaderboard-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      
+      .leaderboard-table th,
+      .leaderboard-table td {
+        padding: 0.75rem;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      
+      .leaderboard-table th {
+        background: rgba(255, 255, 255, 0.02);
+        font-weight: 600;
+        color: #ff6b6b;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      
+      .leaderboard-table tr:hover {
+        background: rgba(255, 255, 255, 0.02);
+      }
+      
+      .rank-cell {
+        font-weight: 700;
+        color: #ff6b6b;
+        width: 60px;
+      }
+      
+      .handle-cell {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      
+      .handle-name {
+        font-weight: 500;
+        color: #ffffff;
+      }
+      
+      .handle-source {
+        font-size: 0.7rem;
+        padding: 2px 6px;
+        border-radius: 10px;
+        background: rgba(255, 107, 107, 0.2);
+        color: #ff6b6b;
+      }
+      
+      .stats-cell {
+        color: #a0a0a0;
+        font-size: 0.9rem;
+      }
+      
+      .amount-cell {
+        font-weight: 600;
+        color: #ff6b6b;
+      }
+      
+      .basescan-link {
+        color: #ff6b6b;
+        text-decoration: none;
+        font-size: 0.8rem;
+        padding: 2px 6px;
+        border-radius: 4px;
+        background: rgba(255, 107, 107, 0.1);
+        border: 1px solid rgba(255, 107, 107, 0.2);
+        transition: all 0.2s ease;
+      }
+      
+      .basescan-link:hover {
+        background: rgba(255, 107, 107, 0.2);
+        border-color: rgba(255, 107, 107, 0.4);
+        transform: translateY(-1px);
       }
       
       .shame-soldiers {
@@ -517,22 +666,32 @@
       }
       
       @media (max-width: 768px) {
-        .wallet-section {
-          position: static;
-          margin-bottom: 2rem;
+        .container {
+          padding: 1rem;
         }
         
         .main-content {
           grid-template-columns: 1fr;
           margin-right: 0;
+          max-width: 100%;
+        }
+        
+        .header {
+          max-width: 100%;
         }
         
         .header h1 {
           font-size: 2.5rem;
         }
         
-        .container {
-          padding: 1rem;
+        .wallet-section {
+          position: static;
+          margin-bottom: 2rem;
+        }
+        
+        .card {
+          padding: 1.5rem;
+          min-height: auto;
         }
         
         .shame-feed {
@@ -595,12 +754,31 @@
           </form>
         </div>
         
-        <div class="card leaderboard">
-          <h2>🏆 Top 50 Shame Soldiers</h2>
-          <div id="leaderboard" class="shame-soldiers">
-            <div class="loading">Loading shame soldiers...</div>
-          </div>
-        </div>
+                       <div class="card leaderboard">
+                 <h2>🏆 Leaderboards</h2>
+                 <div class="leaderboard-container">
+                   <!-- Leaderboard Header -->
+                   <div class="leaderboard-header">
+                     <div class="leaderboard-tabs">
+                       <button class="tab-button active" data-tab="received">Shame Received</button>
+                       <button class="tab-button" data-tab="sent">Shame Soldiers</button>
+                     </div>
+                     
+                     <div class="time-period-selector">
+                       <select id="timePeriod" class="period-dropdown">
+                         <option value="all">All Time</option>
+                         <option value="week">This Week</option>
+                         <option value="day">Today</option>
+                       </select>
+                     </div>
+                   </div>
+                   
+                   <!-- Leaderboard Content -->
+                   <div id="leaderboardContent" class="leaderboard-content">
+                     <div class="loading">Loading leaderboards...</div>
+                   </div>
+                 </div>
+               </div>
       </div>
     </div>
     

@@ -164,14 +164,14 @@ export class ShameFeedService extends EventEmitter {
       
       console.log(`Found ${logs.length} total transfer logs in last 5000 blocks`);
       
-      const filteredLogs = logs.slice(-20).filter((log: any) => {
-        const iface = new ethers.Interface([
-          'event Transfer(address indexed from, address indexed to, uint256 value)'
-        ]);
-        const decoded = iface.parseLog(log);
-        const amount = parseFloat(ethers.formatUnits(decoded?.args?.[2] || 0, 18));
-        return amount > 0 && amount <= 10000; // Show transactions up to 10,000 WANKR (good for shame feed)
-      });
+                         const filteredLogs = logs.slice(-20).filter((log: any) => {
+                       const iface = new ethers.Interface([
+                           'event Transfer(address indexed from, address indexed to, uint256 value)'
+                       ]);
+                       const decoded = iface.parseLog(log);
+                       const amount = parseFloat(ethers.formatUnits(decoded?.args?.[2] || 0, 18));
+                       return amount > 0 && amount <= 1000; // Show transactions up to 1,000 WANKR (shame only)
+                   });
 
       // Resolve handles for filtered transactions
       this.shameHistory = await Promise.all(filteredLogs.map(async (log: any) => {

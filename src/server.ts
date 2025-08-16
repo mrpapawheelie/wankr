@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import { ethers } from 'ethers';
 import { ShameFeedService } from './services/shameFeedService';
 import { HandleResolutionService } from './services/handleResolutionService';
+import { LeaderboardService } from './services/leaderboardService';
 
 // Load environment variables
 dotenv.config({ path: '.env.local' });
@@ -34,6 +35,7 @@ const provider = new ethers.JsonRpcProvider(process.env.BASE_RPC_URL || 'https:/
 // Initialize shame feed service
 const shameFeedService = new ShameFeedService(process.env.BASE_RPC_URL || 'https://mainnet.base.org');
 const handleResolver = new HandleResolutionService();
+const leaderboardService = new LeaderboardService(process.env.BASE_RPC_URL || 'https://mainnet.base.org');
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -231,6 +233,50 @@ app.post('/api/clear-cache', (req, res) => {
   } catch (error) {
     console.error('Error clearing cache:', error);
     return res.status(500).json({ error: 'Failed to clear cache' });
+  }
+});
+
+// Leaderboard endpoints
+app.get('/api/leaderboards/:type/:period', async (req, res) => {
+  try {
+    const { type, period } = req.params;
+    
+    if (!['received', 'sent'].includes(type)) {
+      return res.status(400).json({ error: 'Invalid leaderboard type. Use "received" or "sent"' });
+    }
+    
+    if (!['all', 'week', 'day'].includes(period)) {
+      return res.status(400).json({ error: 'Invalid period. Use "all", "week", or "day"' });
+    }
+
+    let leaderboard;
+    if (type === 'received') {
+      leaderboard = await leaderboardService.getShameReceivedLeaderboard(period as 'all' | 'week' | 'day');
+    } else {
+      leaderboard = await leaderboardService.getShameSoldiersLeaderboard(period as 'all' | 'week' | 'day');
+    }
+
+    return res.json(leaderboard);
+  } catch (error) {
+    console.error('Error getting leaderboard:', error);
+    return res.status(500).json({ error: 'Failed to get leaderboard' });
+  }
+});
+
+// Get both leaderboards at once
+app.get('/api/leaderboards/:period', async (req, res) => {
+  try {
+    const { period } = req.params;
+    
+    if (!['all', 'week', 'day'].includes(period)) {
+      return res.status(400).json({ error: 'Invalid period. Use "all", "week", or "day"' });
+    }
+
+    const leaderboards = await leaderboardService.getLeaderboards(period as 'all' | 'week' | 'day');
+    return res.json(leaderboards);
+  } catch (error) {
+    console.error('Error getting leaderboards:', error);
+    return res.status(500).json({ error: 'Failed to get leaderboards' });
   }
 });
 
