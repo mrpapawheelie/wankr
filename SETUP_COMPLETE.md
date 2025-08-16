@@ -18,6 +18,7 @@
 - [x] **Deployment Script**: Ready for testnet/mainnet deployment
 - [x] **Contract Features**:
   - Standard 10 WANKR shame delivery
+    - hooking the message into @netprotocolapp so the shame lives onchain forever with $WANKR
   - Custom shame amounts (except forbidden 69)
   - Top 50 Shame Soldiers leaderboard
   - Spectral judgment scale (1-10)

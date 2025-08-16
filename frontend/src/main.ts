@@ -35,6 +35,12 @@ const shameReasonInput = document.getElementById('shameReason') as HTMLTextAreaE
 const deliverShameBtn = document.getElementById('deliverShame') as HTMLButtonElement;
 const leaderboard = document.getElementById('leaderboard') as HTMLDivElement;
 
+// Shame feed elements
+const shameFeed = document.getElementById('shameFeed') as HTMLDivElement;
+const feedStatus = document.getElementById('feedStatus') as HTMLDivElement;
+const totalShames = document.getElementById('totalShames') as HTMLSpanElement;
+const activeShamers = document.getElementById('activeShamers') as HTMLSpanElement;
+
 // Initialize the application
 async function init() {
   // Check if MetaMask is installed
@@ -55,6 +61,9 @@ async function init() {
   
   // Load leaderboard
   loadLeaderboard();
+  
+  // Start live shame feed
+  startShameFeed();
 }
 
 // Connect wallet function
@@ -115,7 +124,7 @@ async function updateBalance() {
     const balance = await contract.balanceOf(connectedAddress);
     const decimals = await contract.decimals();
     const formattedBalance = ethers.formatUnits(balance, decimals);
-    wankrBalance.textContent = formattedBalance;
+    wankrBalance.textContent = Math.floor(parseFloat(formattedBalance)).toString();
     
     // Enable/disable deliver shame button based on balance
     deliverShameBtn.disabled = balance < STANDARD_SHAME_AMOUNT;
@@ -196,6 +205,166 @@ async function loadLeaderboard() {
   }
 }
 
+// Start live shame feed
+async function startShameFeed() {
+  try {
+    // First, load initial data
+    await loadInitialShameData();
+    
+    // Then start real-time updates
+    startShameFeedStream();
+    
+  } catch (error) {
+    console.error('Error starting shame feed:', error);
+    feedStatus.textContent = '🔴 Offline';
+    feedStatus.className = 'feed-status offline';
+  }
+}
+
+// Load initial shame data
+async function loadInitialShameData() {
+  try {
+    const response = await fetch('http://localhost:3001/api/shame-feed');
+    const data = await response.json();
+    
+    displayShameFeed(data.shameHistory);
+    updateFeedStats(data.stats);
+    
+  } catch (error) {
+    console.error('Error loading initial shame data:', error);
+    shameFeed.innerHTML = '<div class="error">Failed to load shame feed</div>';
+  }
+}
+
+// Start real-time shame feed stream
+function startShameFeedStream() {
+  const eventSource = new EventSource('http://localhost:3001/api/shame-feed/stream');
+  
+  eventSource.onopen = () => {
+    feedStatus.textContent = '🟢 Live';
+    feedStatus.className = 'feed-status';
+  };
+  
+  eventSource.onerror = () => {
+    feedStatus.textContent = '🔴 Offline';
+    feedStatus.className = 'feed-status offline';
+  };
+  
+  eventSource.addEventListener('initialData', (event) => {
+    const data = JSON.parse(event.data);
+    displayShameFeed(data.shameHistory);
+    updateFeedStats(data.stats);
+  });
+  
+  eventSource.addEventListener('newShame', (event) => {
+    const shameTx = JSON.parse(event.data);
+    addNewShameToFeed(shameTx);
+  });
+  
+  eventSource.addEventListener('shameHistoryUpdate', (event) => {
+    const history = JSON.parse(event.data);
+    displayShameFeed(history);
+  });
+  
+  eventSource.addEventListener('leaderboardUpdate', (event) => {
+    const soldiers = JSON.parse(event.data);
+    // TODO: Update leaderboard when implemented
+  });
+}
+
+// Display shame feed
+function displayShameFeed(shameHistory: any[]) {
+  if (shameHistory.length === 0) {
+    shameFeed.innerHTML = '<div class="loading">No shame delivered yet. Be the first!</div>';
+    return;
+  }
+  
+  const feedHTML = shameHistory.slice(0, 20).map(shame => createShameItemHTML(shame)).join('');
+  shameFeed.innerHTML = feedHTML;
+}
+
+// Add new shame to feed
+function addNewShameToFeed(shameTx: any) {
+  const shameItemHTML = createShameItemHTML(shameTx, true);
+  
+  // Add to the top of the feed
+  shameFeed.insertAdjacentHTML('afterbegin', shameItemHTML);
+  
+  // Remove old items if we have too many
+  const items = shameFeed.querySelectorAll('.shame-item');
+  if (items.length > 20) {
+    items[items.length - 1].remove();
+  }
+  
+  // Remove the 'new' class after animation
+  setTimeout(() => {
+    const newItem = shameFeed.querySelector('.shame-item.new');
+    if (newItem) {
+      newItem.classList.remove('new');
+    }
+  }, 2000);
+}
+
+// Create shame item HTML
+function createShameItemHTML(shame: any, isNew: boolean = false) {
+  const fromDisplay = shame.fromDisplayName || shortenAddress(shame.from);
+  const toDisplay = shame.toDisplayName || shortenAddress(shame.to);
+  const timeAgo = getTimeAgo(shame.timestamp);
+  const judgmentClass = shame.judgment ? `judgment-${shame.judgment}` : '';
+  const judgmentHTML = shame.judgment ? `<span class="shame-judgment ${judgmentClass}">${shame.judgment}/10</span>` : '';
+  
+  // Format amount as whole integer
+  const amount = Math.floor(parseFloat(shame.amount));
+  
+  // Create clickable transaction link
+  const transactionLink = shame.transactionHash ? 
+    `<a href="https://basescan.org/tx/${shame.transactionHash}" target="_blank" class="transaction-link">🔗</a>` : '';
+  
+  return `
+    <div class="shame-item ${isNew ? 'new' : ''}">
+      <div class="shame-header">
+        <div class="shame-addresses">
+          <span class="shamer">${fromDisplay}</span>
+          <span class="shame-action">shamed</span>
+          <span class="shamed">${toDisplay}</span>
+        </div>
+        <div class="shame-amount">
+          <div class="amount-container">
+            <span class="amount-number">${amount}</span>
+            <span class="amount-label">WANKR</span>
+          </div>
+          ${judgmentHTML}
+        </div>
+      </div>
+      <div class="shame-reason">${shame.reason || ''}</div>
+      <div class="shame-footer">
+        <div class="shame-time">${timeAgo} ${transactionLink}</div>
+      </div>
+    </div>
+  `;
+}
+
+// Update feed statistics
+function updateFeedStats(stats: any) {
+  totalShames.textContent = stats.totalShames || '0';
+  activeShamers.textContent = stats.uniqueShamers || '0';
+}
+
+// Utility functions
+function shortenAddress(address: string): string {
+  return `${address.slice(0, 6)}...${address.slice(-4)}`;
+}
+
+function getTimeAgo(timestamp: number): string {
+  const now = Math.floor(Date.now() / 1000);
+  const diff = now - timestamp;
+  
+  if (diff < 60) return 'Just now';
+  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+  return `${Math.floor(diff / 86400)}d ago`;
+}
+
 // Display leaderboard data
 function displayLeaderboard(soldiers: any[]) {
   if (soldiers.length === 0) {
@@ -208,9 +377,9 @@ function displayLeaderboard(soldiers: any[]) {
       <div class="soldier-rank">#${soldier.rank || index + 1}</div>
       <div class="soldier-info">
         <div class="soldier-address">${soldier.soldier}</div>
-        <div class="soldier-shame">${ethers.formatUnits(soldier.totalShameDelivered, 18)} WANKR delivered</div>
+        <div class="soldier-shame">${Math.floor(parseFloat(ethers.formatUnits(soldier.totalShameDelivered, 18)))} WANKR delivered</div>
       </div>
-    </div>
+  </div>
   `).join('');
   
   leaderboard.innerHTML = soldiersHTML;

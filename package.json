@@ -20,7 +20,14 @@
     "type": "git",
     "url": "git+https://github.com/Alcb4/wankr.git"
   },
-  "keywords": ["wankr", "crypto", "token", "base", "blockchain", "meme"],
+  "keywords": [
+    "wankr",
+    "crypto",
+    "token",
+    "base",
+    "blockchain",
+    "meme"
+  ],
   "author": "",
   "license": "ISC",
   "bugs": {
@@ -28,6 +35,8 @@
   },
   "homepage": "https://github.com/Alcb4/wankr#readme",
   "dependencies": {
+    "@bankr/sdk": "^0.1.0-alpha.5",
+    "@neynar/nodejs-sdk": "^3.34.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/node": "^24.3.0",

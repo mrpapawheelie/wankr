@@ -58,11 +58,40 @@
         margin: 0 auto;
       }
       
+      .wallet-section {
+        position: fixed;
+        top: 2rem;
+        right: 2rem;
+        z-index: 100;
+        max-width: 300px;
+      }
+      
+      .wallet-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 1.5rem;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+      }
+      
+      .wallet-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      }
+      
+      .wallet-card h2 {
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+        color: #ff6b6b;
+      }
+      
       .main-content {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 2rem;
         margin-bottom: 3rem;
+        margin-right: 320px; /* Make room for wallet section */
       }
       
       .card {
@@ -266,9 +295,236 @@
         margin-bottom: 1rem;
       }
       
+      /* Shame Feed Styles */
+      .shame-feed {
+        height: 400px;
+        display: flex;
+        flex-direction: column;
+      }
+      
+      .feed-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      
+      .feed-stats {
+        display: flex;
+        gap: 1rem;
+        font-size: 0.9rem;
+      }
+      
+      .stat {
+        color: #a0a0a0;
+      }
+      
+      .stat span {
+        color: #ff8e53;
+        font-weight: 600;
+      }
+      
+      .feed-status {
+        font-size: 0.9rem;
+        font-weight: 600;
+        padding: 0.25rem 0.5rem;
+        border-radius: 12px;
+        background: rgba(46, 213, 115, 0.1);
+        color: #2ed573;
+      }
+      
+      .feed-status.offline {
+        background: rgba(255, 71, 87, 0.1);
+        color: #ff4757;
+      }
+      
+      .shame-feed-list {
+        flex: 1;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      
+      .shame-item {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        padding: 1rem;
+        transition: all 0.3s ease;
+        animation: slideIn 0.3s ease-out;
+        backdrop-filter: blur(10px);
+      }
+      
+      .shame-item:hover {
+        background: rgba(255, 255, 255, 0.04);
+        border-color: rgba(255, 107, 107, 0.4);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(255, 107, 107, 0.1);
+      }
+      
+      .shame-item.new {
+        background: rgba(255, 107, 107, 0.08);
+        border-color: rgba(255, 107, 107, 0.6);
+        animation: pulse 2s ease-in-out;
+      }
+      
+      .shame-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.75rem;
+        gap: 1rem;
+      }
+      
+      .shame-addresses {
+        font-size: 0.9rem;
+        color: #a0a0a0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      
+      .shamer {
+        color: #ff6b6b;
+        font-weight: 600;
+      }
+      
+      .shame-action {
+        color: #ff8e53;
+        font-weight: 500;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      
+      .shamed {
+        color: #a0a0a0;
+        font-weight: 500;
+      }
+      
+      .shame-amount {
+        font-weight: 700;
+        color: #ff6b6b;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      
+      .amount-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+      }
+      
+      .amount-number {
+        font-size: 1.3rem;
+        font-weight: 800;
+        line-height: 1;
+      }
+      
+      .amount-label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        opacity: 0.9;
+      }
+      
+      .shame-reason {
+        font-size: 0.9rem;
+        color: #e0e0e0;
+        margin-bottom: 0.5rem;
+        font-style: italic;
+        line-height: 1.4;
+        min-height: 0;
+      }
+      
+      .shame-reason:empty {
+        display: none;
+      }
+      
+      .shame-footer {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        margin-top: 0.5rem;
+      }
+      
+      .shame-time {
+        font-size: 0.75rem;
+        color: #888;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      
+      .shame-judgment {
+        display: inline-block;
+        padding: 0.1rem 0.4rem;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-left: 0.5rem;
+      }
+      
+      .judgment-1 { background: rgba(46, 213, 115, 0.2); color: #2ed573; }
+      .judgment-5 { background: rgba(255, 193, 7, 0.2); color: #ffc107; }
+      .judgment-8 { background: rgba(255, 152, 0, 0.2); color: #ff9800; }
+      .judgment-10 { background: rgba(255, 71, 87, 0.2); color: #ff4757; }
+      
+
+      
+      /* Transaction link styles */
+      .transaction-link {
+        display: inline-block;
+        color: #ff6b6b;
+        text-decoration: none;
+        font-size: 0.75em;
+        transition: all 0.2s ease;
+        padding: 2px 6px;
+        border-radius: 4px;
+        background: rgba(255, 107, 107, 0.1);
+        border: 1px solid rgba(255, 107, 107, 0.2);
+      }
+      
+      .transaction-link:hover {
+        color: #ff4757;
+        background: rgba(255, 107, 107, 0.2);
+        border-color: rgba(255, 107, 107, 0.4);
+        transform: translateY(-1px);
+      }
+      
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      
+      @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+      }
+      
       @media (max-width: 768px) {
+        .wallet-section {
+          position: static;
+          margin-bottom: 2rem;
+        }
+        
         .main-content {
           grid-template-columns: 1fr;
+          margin-right: 0;
         }
         
         .header h1 {
@@ -277,6 +533,10 @@
         
         .container {
           padding: 1rem;
+        }
+        
+        .shame-feed {
+          height: 300px;
         }
       }
     </style>
@@ -288,14 +548,33 @@
         <p>The Dark Mirror of the Base Chain - Where BankerBot optimized trades, WANKR GYATT optimized shame.</p>
       </div>
       
-      <div class="main-content">
-        <div class="card">
+      <!-- Wallet Connection (Top Right) -->
+      <div class="wallet-section">
+        <div class="wallet-card">
           <h2>🔗 Connect Wallet</h2>
           <button id="connectWallet" class="connect-wallet">Connect MetaMask</button>
           <div id="walletInfo" class="wallet-info" style="display: none;">
             <h3>Connected Wallet</h3>
             <div id="walletAddress" class="address"></div>
             <div class="balance">Balance: <span id="wankrBalance">0</span> WANKR</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="main-content">
+        <div class="card">
+          <h2>🎭 Live Shame Feed</h2>
+          <div class="shame-feed">
+            <div class="feed-header">
+              <div class="feed-stats">
+                <span class="stat">Total Shames: <span id="totalShames">0</span></span>
+                <span class="stat">Active Shamers: <span id="activeShamers">0</span></span>
+              </div>
+              <div class="feed-status" id="feedStatus">🟢 Live</div>
+            </div>
+            <div id="shameFeed" class="shame-feed-list">
+              <div class="loading">Loading shame feed...</div>
+            </div>
           </div>
         </div>
         
