@@ -35,7 +35,7 @@ const provider = new ethers.JsonRpcProvider(process.env.BASE_RPC_URL || 'https:/
 // Initialize shame feed service
 const shameFeedService = new ShameFeedService(process.env.BASE_RPC_URL || 'https://mainnet.base.org');
 const handleResolver = new HandleResolutionService();
-const leaderboardService = new LeaderboardService(process.env.BASE_RPC_URL || 'https://mainnet.base.org');
+const leaderboardService = new LeaderboardService(process.env.BASE_RPC_URL || 'https://mainnet.base.org', handleResolver);
 
 // Health check endpoint
 app.get('/health', (req, res) => {

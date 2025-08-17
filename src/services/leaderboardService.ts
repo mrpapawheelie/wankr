@@ -26,10 +26,10 @@ export class LeaderboardService {
     'function getTopShameSoldiers() external view returns (tuple(address soldier, uint256 totalShameDelivered, uint256 lastShameTime, uint256 rank)[])'
   ];
 
-  constructor(rpcUrl: string = 'https://mainnet.base.org') {
+  constructor(rpcUrl: string = 'https://mainnet.base.org', handleResolver?: HandleResolutionService) {
     this.provider = new ethers.JsonRpcProvider(rpcUrl);
     this.contract = new ethers.Contract(this.WANKR_CONTRACT_ADDRESS, this.WANKR_ABI, this.provider);
-    this.handleResolver = new HandleResolutionService();
+    this.handleResolver = handleResolver || new HandleResolutionService();
   }
 
   /**

@@ -42,6 +42,7 @@ export class HandleResolutionService {
    */
   private initializeNeynarClient(): void {
     const apiKey = process.env.NEYNAR_API_KEY;
+    console.log('Initializing Neynar client with API key:', apiKey ? 'Present' : 'Missing');
     if (apiKey && apiKey !== 'your_neynar_api_key_here') {
       try {
         const config = new Configuration({
@@ -226,6 +227,7 @@ export class HandleResolutionService {
    */
   private async resolveFromFarcaster(address: string): Promise<HandleResolution | null> {
     try {
+      console.log(`Attempting Farcaster resolution for ${address}`);
       if (!this.neynarClient) {
         console.log('Neynar client not initialized');
         return null;
@@ -248,9 +250,11 @@ export class HandleResolutionService {
         addresses: [address]
       });
 
-      // According to Neynar docs, result contains users array
-      if (result && result.users && result.users.length > 0) {
-        const user = result.users[0];
+      console.log(`Neynar API result for ${address}:`, JSON.stringify(result, null, 2));
+
+      // The result structure is { [address]: [user] }
+      if (result && result[address] && result[address].length > 0) {
+        const user = result[address][0];
         console.log(`Found Farcaster user: @${user.username} for ${address}`);
         
         return {
@@ -260,7 +264,7 @@ export class HandleResolutionService {
           handle: user.username,
           platform: 'farcaster',
           verified: true,
-          avatar: (user as any).pfp?.url,
+          avatar: user.pfp_url,
           lastUpdated: Date.now()
         };
       }

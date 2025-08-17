@@ -189,6 +189,10 @@ async function deliverShame(event: Event) {
 // Load leaderboards data
 async function loadLeaderboards() {
   try {
+    // Show loading state
+    leaderboardContent.style.display = 'flex';
+    leaderboardContent.innerHTML = '<div class="loading">Loading leaderboards...</div>';
+    
     const period = timePeriodSelect.value;
     const response = await fetch(`http://localhost:3001/api/leaderboards/${period}`);
     const data = await response.json();
@@ -209,20 +213,36 @@ function setupLeaderboardEvents() {
   // Tab switching
   const tabButtons = document.querySelectorAll('.tab-button');
   tabButtons.forEach(button => {
-    button.addEventListener('click', () => {
+    button.addEventListener('click', async () => {
       // Remove active class from all tabs
       tabButtons.forEach(btn => btn.classList.remove('active'));
       // Add active class to clicked tab
       button.classList.add('active');
       
+      // Show loading state on the clicked button
+      const originalText = button.textContent;
+      button.textContent = 'Loading...';
+      button.disabled = true;
+      
       // Load leaderboards with current period
-      loadLeaderboards();
+      await loadLeaderboards();
+      
+      // Restore button state
+      button.textContent = originalText;
+      button.disabled = false;
     });
   });
   
   // Time period change
-  timePeriodSelect.addEventListener('change', () => {
-    loadLeaderboards();
+  timePeriodSelect.addEventListener('change', async () => {
+    // Show loading state on the select
+    const originalValue = timePeriodSelect.value;
+    timePeriodSelect.disabled = true;
+    
+    await loadLeaderboards();
+    
+    // Restore select state
+    timePeriodSelect.disabled = false;
   });
 }
 
@@ -235,6 +255,9 @@ function displayLeaderboards(data: any) {
     leaderboardContent.innerHTML = '<div class="loading">No data available for this period</div>';
     return;
   }
+  
+  // Reset flex properties for table display
+  leaderboardContent.style.display = 'block';
   
   const tableHTML = `
     <table class="leaderboard-table">

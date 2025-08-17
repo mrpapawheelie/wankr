@@ -278,6 +278,17 @@
         color: #ff6b6b;
       }
       
+      .tab-button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+      
+      .period-dropdown:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+      
       .time-period-selector {
         display: flex;
         align-items: center;
@@ -301,6 +312,10 @@
       .leaderboard-content {
         max-height: 400px;
         overflow-y: auto;
+        min-height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
       
       .leaderboard-table {
@@ -424,6 +439,21 @@
         text-align: center;
         color: #a0a0a0;
         font-style: italic;
+        padding: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+      
+      .loading::before {
+        content: "⏳";
+        animation: spin 1s linear infinite;
+      }
+      
+      @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
       }
       
       .error {
