@@ -1,11 +1,6 @@
 {
   "buildCommand": "npm run build",
   "installCommand": "npm install",
-  "framework": "node",
-  "outputDirectory": "dist",
-  "functions": {
-    "src/server.ts": {
-      "runtime": "nodejs18.x"
-    }
-  }
+  "framework": "vite",
+  "outputDirectory": "frontend/dist"
 }
