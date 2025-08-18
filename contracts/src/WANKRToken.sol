@@ -142,10 +142,10 @@ contract WANKRToken is ERC20, Ownable, ReentrancyGuard {
      * @dev Calculate spectral judgment (1-10) based on shame amount
      */
     function _calculateSpectralJudgment(uint256 amount) internal pure returns (uint8) {
-        if (amount <= 1 * 10**18) return 1; // Mildly Mid
-        if (amount <= 5 * 10**18) return 5; // Moderately Wanker
-        if (amount <= 10 * 10**18) return 8; // Pretty Wanker
-        return 10; // Full Blown Wanker
+        if (amount <= 1 * 10**18) return 1; // Little Wankr
+        if (amount <= 5 * 10**18) return 5; // Occasional Wankr
+        if (amount <= 10 * 10**18) return 8; // Major Wankr
+        return 10; // Full Blown Wankr
     }
     
     /**

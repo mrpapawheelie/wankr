@@ -5,6 +5,8 @@ import { ethers } from 'ethers';
 import { ShameFeedService } from './services/shameFeedService';
 import { HandleResolutionService } from './services/handleResolutionService';
 import { LeaderboardService } from './services/leaderboardService';
+import { RegisterService } from './services/register';
+import { CheckRegisterService } from './services/checkRegister';
 
 // Load environment variables
 dotenv.config({ path: '.env.local' });
@@ -33,9 +35,12 @@ const ERC20_ABI = [
 const provider = new ethers.JsonRpcProvider(process.env.BASE_RPC_URL || 'https://mainnet.base.org');
 
 // Initialize shame feed service
-const shameFeedService = new ShameFeedService(process.env.BASE_RPC_URL || 'https://mainnet.base.org');
-const handleResolver = new HandleResolutionService();
-const leaderboardService = new LeaderboardService(process.env.BASE_RPC_URL || 'https://mainnet.base.org', handleResolver);
+  // Initialize services with new architecture
+  const registerService = new RegisterService();
+  const checkRegisterService = new CheckRegisterService(registerService);
+  const handleResolver = new HandleResolutionService(checkRegisterService, registerService);
+  const shameFeedService = new ShameFeedService(process.env.BASE_RPC_URL || 'https://mainnet.base.org', handleResolver);
+  const leaderboardService = new LeaderboardService(handleResolver);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -101,80 +106,37 @@ app.get('/api/balance/:address', async (req, res) => {
   }
 });
 
-// Shame leaderboard endpoint (placeholder for now)
-app.get('/api/leaderboard', (req, res) => {
-  // TODO: Implement shame leaderboard logic
-  res.json({
-    message: 'Shame leaderboard coming soon...',
-    topShameSoldiers: []
-  });
-});
-
-// Live shame feed endpoint
-app.get('/api/shame-feed', (req, res) => {
+// Get shame feed data
+app.get('/api/shame-feed', async (req, res) => {
   try {
     const shameHistory = shameFeedService.getShameHistory();
     const topSoldiers = shameFeedService.getTopSoldiers();
     const stats = shameFeedService.getShameStats();
-    
-    res.json({
+
+    return res.json({
       shameHistory,
       topSoldiers,
       stats,
       lastUpdated: new Date().toISOString()
     });
   } catch (error) {
-    console.error('Error fetching shame feed:', error);
-    res.status(500).json({ error: 'Failed to fetch shame feed' });
+    console.error('Error getting shame feed:', error);
+    return res.status(500).json({ error: 'Failed to get shame feed' });
   }
 });
 
-// WebSocket endpoint for real-time shame feed
-app.get('/api/shame-feed/stream', (req, res) => {
-  res.writeHead(200, {
-    'Content-Type': 'text/event-stream',
-    'Cache-Control': 'no-cache',
-    'Connection': 'keep-alive',
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Cache-Control'
-  });
-
-  const sendEvent = (event: string, data: any) => {
-    res.write(`event: ${event}\n`);
-    res.write(`data: ${JSON.stringify(data)}\n\n`);
-  };
-
-  // Send initial data
-  const initialData = {
-    shameHistory: shameFeedService.getShameHistory(),
-    topSoldiers: shameFeedService.getTopSoldiers(),
-    stats: shameFeedService.getShameStats()
-  };
-  sendEvent('initialData', initialData);
-
-  // Listen for new shame events
-  const onNewShame = (shameTx: any) => {
-    sendEvent('newShame', shameTx);
-  };
-
-  const onShameHistoryUpdate = (history: any) => {
-    sendEvent('shameHistoryUpdate', history);
-  };
-
-  const onLeaderboardUpdate = (soldiers: any) => {
-    sendEvent('leaderboardUpdate', soldiers);
-  };
-
-  shameFeedService.on('newShame', onNewShame);
-  shameFeedService.on('shameHistoryUpdate', onShameHistoryUpdate);
-  shameFeedService.on('leaderboardUpdate', onLeaderboardUpdate);
-
-  // Clean up on disconnect
-  req.on('close', () => {
-    shameFeedService.off('newShame', onNewShame);
-    shameFeedService.off('shameHistoryUpdate', onShameHistoryUpdate);
-    shameFeedService.off('leaderboardUpdate', onLeaderboardUpdate);
-  });
+// Refresh shame feed with resolved handles
+app.post('/api/shame-feed/refresh-handles', async (req, res) => {
+  try {
+    const updatedHistory = await shameFeedService.refreshShameHistoryWithHandles();
+    return res.json({ 
+      message: 'Shame feed refreshed with handle resolutions',
+      updatedCount: updatedHistory.length
+    });
+  } catch (error) {
+    console.error('Error refreshing shame feed handles:', error);
+    return res.status(500).json({ error: 'Failed to refresh shame feed handles' });
+  }
 });
 
 // Handle resolution endpoint
@@ -193,31 +155,31 @@ app.get('/api/resolve-handle/:address', async (req, res) => {
   }
 });
 
-// Batch handle resolution endpoint
-app.post('/api/resolve-handles', async (req, res) => {
+// Bulk handle resolution endpoint for leaderboards
+app.post('/api/resolve-handles-bulk', async (req, res) => {
   try {
     const { addresses } = req.body;
-    if (!Array.isArray(addresses) || addresses.length === 0) {
-      return res.status(400).json({ error: 'Invalid addresses array' });
+    if (!Array.isArray(addresses)) {
+      return res.status(400).json({ error: 'Addresses must be an array' });
     }
     
-    const resolutions = await handleResolver.resolveMultipleHandles(addresses);
+
+    const resolutions = await handleResolver.resolveHandlesBulk(addresses);
     return res.json(resolutions);
   } catch (error) {
-    console.error('Error resolving handles:', error);
-    return res.status(500).json({ error: 'Failed to resolve handles' });
+    console.error('Error bulk resolving handles:', error);
+    return res.status(500).json({ error: 'Failed to bulk resolve handles' });
   }
 });
 
-// Handle resolution stats endpoint
+// Get handle resolution stats endpoint
 app.get('/api/handle-stats', (req, res) => {
   try {
     const cacheStats = handleResolver.getCacheStats();
-    const apiStats = handleResolver.getApiUsageStats();
     
     return res.json({
       cache: cacheStats,
-      api: apiStats
+      note: 'API usage stats removed in simplified version'
     });
   } catch (error) {
     console.error('Error getting handle stats:', error);
@@ -233,6 +195,56 @@ app.post('/api/clear-cache', (req, res) => {
   } catch (error) {
     console.error('Error clearing cache:', error);
     return res.status(500).json({ error: 'Failed to clear cache' });
+  }
+});
+
+// Clear handle resolution register endpoint
+app.post('/api/clear-register', (req, res) => {
+  try {
+    registerService.clearRegister();
+    return res.json({ message: 'Register cleared successfully' });
+  } catch (error) {
+    console.error('Error clearing register:', error);
+    return res.status(500).json({ error: 'Failed to clear register' });
+  }
+});
+
+// Remove specific addresses from cache endpoint
+app.post('/api/remove-from-cache', (req, res) => {
+  try {
+    const { addresses } = req.body;
+    if (!Array.isArray(addresses)) {
+      return res.status(400).json({ error: 'Addresses must be an array' });
+    }
+    
+    handleResolver.removeFromCache(addresses);
+    return res.json({ 
+      message: `Removed ${addresses.length} addresses from cache`,
+      removedAddresses: addresses
+    });
+  } catch (error) {
+    console.error('Error removing from cache:', error);
+    return res.status(500).json({ error: 'Failed to remove from cache' });
+  }
+});
+
+// Remove specific addresses from register endpoint
+app.post('/api/remove-from-register', (req, res) => {
+  try {
+    const { addresses } = req.body;
+    if (!Array.isArray(addresses)) {
+      return res.status(400).json({ error: 'Addresses must be an array' });
+    }
+    
+    const removedCount = registerService.removeFromRegisterBulk(addresses);
+    return res.json({ 
+      message: `Removed ${removedCount} addresses from register`,
+      removedAddresses: addresses,
+      removedCount
+    });
+  } catch (error) {
+    console.error('Error removing from register:', error);
+    return res.status(500).json({ error: 'Failed to remove from register' });
   }
 });
 
@@ -280,24 +292,39 @@ app.get('/api/leaderboards/:period', async (req, res) => {
   }
 });
 
-// Test BankrBot SDK endpoint (handle → wallet)
-app.get('/api/test-bankrbot/:handle', async (req, res) => {
+// Test Dune integration endpoint
+app.get('/api/test-dune', async (req, res) => {
   try {
-    const { handle } = req.params;
+    const duneService = new (await import('./services/duneService')).DuneService();
+    const isConnected = await duneService.testConnection();
     
-    console.log(`Testing BankrBot SDK for handle: ${handle}`);
-    
-    // Note: BankrBot only supports handle → wallet, not wallet → handle
-    // This endpoint is for testing handle → wallet lookup
-    return res.json({
-      handle,
-      wallet: null,
-      success: false,
-      note: 'BankrBot SDK requires private key for signing. Use direct API calls instead.'
-    });
+    if (isConnected) {
+      // Test getting some data
+      const leaderboards = await duneService.getLeaderboards();
+      
+      return res.json({
+        success: true,
+        message: 'Dune API integration working',
+        data: {
+          receivedCount: leaderboards.received.length,
+          sentCount: leaderboards.sent.length,
+          sampleReceived: leaderboards.received.slice(0, 3),
+          sampleSent: leaderboards.sent.slice(0, 3)
+        }
+      });
+    } else {
+      return res.status(500).json({
+        success: false,
+        message: 'Dune API connection failed'
+      });
+    }
   } catch (error) {
-    console.error('Error testing BankrBot SDK:', error);
-    return res.status(500).json({ error: 'Failed to test BankrBot SDK', details: (error as Error).message });
+    console.error('Error testing Dune integration:', error);
+    return res.status(500).json({ 
+      success: false,
+      error: 'Failed to test Dune integration', 
+      details: (error as Error).message 
+    });
   }
 });
 
@@ -310,7 +337,7 @@ app.listen(PORT, async () => {
   // Start shame feed monitoring
   try {
     await shameFeedService.startMonitoring();
-    console.log(`🎭 Shame feed monitoring started`);
+
   } catch (error) {
     console.error('Failed to start shame feed monitoring:', error);
   }

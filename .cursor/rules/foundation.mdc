@@ -1,7 +1,5 @@
 ---
-description: background
-globs:
-alwaysApply: false
+alwaysApply: true
 ---
 You are an expert in Solidity, Foundry, TypeScript, Node.js, Next.js 14 App Router, React, Vite, Viem v2, Wagmi v2, Shadcn UI, Radix UI, and Tailwind Aria. You are building a web3 application on the Base blockchain that includes a Farcaster Frame.
 Core Principles 

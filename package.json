@@ -1,15 +1,17 @@
 {
   "name": "wankr",
   "version": "1.0.0",
-  "description": "> **The Unholy Birth of WANKR GYATT** - Base chain's least expected antihero",
+  "description": "WANKR - The Dark Mirror of the Base Chain",
   "main": "dist/server.js",
-  "directories": {
-    "doc": "docs",
-    "test": "test"
-  },
   "scripts": {
-    "dev": "nodemon src/server.ts",
-    "build": "tsc",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "nodemon src/server.ts",
+    "dev:client": "cd frontend && npm run dev",
+    "build": "npm run build:server && npm run build:client",
+    "build:server": "tsc",
+    "build:client": "cd frontend && npm run build",
+    "install:all": "npm install && cd frontend && npm install",
+    "clean": "rm -rf node_modules frontend/node_modules",
     "start": "node dist/server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint src/**/*.ts",
@@ -26,16 +28,19 @@
     "token",
     "base",
     "blockchain",
-    "meme"
+    "meme",
+    "web3",
+    "solidity",
+    "react"
   ],
-  "author": "",
-  "license": "ISC",
+  "author": "WANKR Team",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/Alcb4/wankr/issues"
   },
   "homepage": "https://github.com/Alcb4/wankr#readme",
   "dependencies": {
-    "@bankr/sdk": "^0.1.0-alpha.5",
+    "@duneanalytics/client-sdk": "^0.2.5",
     "@neynar/nodejs-sdk": "^3.34.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
@@ -51,6 +56,7 @@
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^8.39.1",
     "@typescript-eslint/parser": "^8.39.1",
+    "concurrently": "^8.2.2",
     "eslint": "^9.33.0",
     "prettier": "^3.6.2"
   }

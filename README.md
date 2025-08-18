@@ -77,7 +77,7 @@ There is no DAO. Only shame. Only WANKR.
 
 - **Blockchain**: Base chain (where legends are born)
 - **Smart Contracts**: Solidity-based with built-in shame mechanics
-- **Frontend**: Modern web3 interface for maximum WANKR distribution
+- **Frontend**: React 18 + TypeScript + Vite for modern web3 interface
 - **Backend**: Decentralized infrastructure powered by pure spite
 - **Analytics**: [WANKR Watch Dune dashboard](https://dune.com/mrpapawheelie/wankr-watch) for Proof of Shame tracking
 

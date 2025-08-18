@@ -1,15 +1,13 @@
 import { ethers } from 'ethers';
 import { EventEmitter } from 'events';
-import { HandleResolutionService } from './handleResolutionService';
+import { HandleResolutionService, HandleResolution } from './handleResolutionService';
 
 // WANKR Contract Configuration
 const WANKR_CONTRACT_ADDRESS = '0xa207c6e67cea08641503947ac05c65748bb9bb07';
 
 // Contract ABI for events we need to monitor
 const WANKR_ABI = [
-  'event ShameDelivered(address indexed from, address indexed to, uint256 amount, string reason)',
-  'event ShameSoldierRanked(address indexed soldier, uint256 totalShameDelivered, uint256 rank)',
-  'event SpectralJudgment(address indexed target, uint8 judgment, string reason)',
+  'event Transfer(address indexed from, address indexed to, uint256 value)',
   'function getShameHistory() view returns (tuple(address from, address to, uint256 amount, uint256 timestamp, string reason)[])',
   'function getTopShameSoldiers() view returns (tuple(address soldier, uint256 totalShameDelivered, uint256 lastShameTime, uint256 rank)[])'
 ];
@@ -25,8 +23,8 @@ export interface ShameTransaction {
   judgment?: number;
   fromDisplayName?: string;
   toDisplayName?: string;
-  fromSource?: 'x' | 'farcaster' | 'ens' | 'shortened';
-  toSource?: 'x' | 'farcaster' | 'ens' | 'shortened';
+  fromSource?: 'farcaster' | 'basenames' | 'shortened';
+  toSource?: 'farcaster' | 'basenames' | 'shortened';
 }
 
 export interface ShameSoldier {
@@ -44,12 +42,13 @@ export class ShameFeedService extends EventEmitter {
   private lastProcessedBlock: number = 0;
   private shameHistory: ShameTransaction[] = [];
   private topSoldiers: ShameSoldier[] = [];
+  private pollingInterval: NodeJS.Timeout | null = null;
 
-  constructor(rpcUrl: string = 'https://mainnet.base.org') {
+  constructor(rpcUrl: string = 'https://mainnet.base.org', handleResolver?: HandleResolutionService) {
     super();
     this.provider = new ethers.JsonRpcProvider(rpcUrl);
     this.contract = new ethers.Contract(WANKR_CONTRACT_ADDRESS, WANKR_ABI, this.provider);
-    this.handleResolver = new HandleResolutionService();
+    this.handleResolver = handleResolver || new HandleResolutionService();
   }
 
   /**
@@ -59,7 +58,6 @@ export class ShameFeedService extends EventEmitter {
     if (this.isMonitoring) return;
     
     this.isMonitoring = true;
-    console.log('🎭 Starting WANKR shame feed monitoring...');
 
     // Get current block number
     const currentBlock = await this.provider.getBlockNumber();
@@ -68,10 +66,8 @@ export class ShameFeedService extends EventEmitter {
     // Load initial data
     await this.loadInitialData();
 
-    // For now, use polling-only mode to avoid filter errors
-    // Event monitoring can be re-enabled later when we have a more stable setup
-    console.log('🔄 Using polling-only mode for stability');
-    this.startPollingOnly();
+    // Start polling
+    this.startPolling();
   }
 
   /**
@@ -79,7 +75,12 @@ export class ShameFeedService extends EventEmitter {
    */
   stopMonitoring() {
     this.isMonitoring = false;
-    console.log('🛑 Stopped WANKR shame feed monitoring');
+    
+    // Clear polling interval
+    if (this.pollingInterval) {
+      clearInterval(this.pollingInterval);
+      this.pollingInterval = null;
+    }
   }
 
   /**
@@ -136,7 +137,6 @@ export class ShameFeedService extends EventEmitter {
       await this.contract.getShameHistory();
       return true;
     } catch (error) {
-      console.log('Contract does not have custom shame functions, using basic transfer monitoring');
       return false;
     }
   }
@@ -148,9 +148,9 @@ export class ShameFeedService extends EventEmitter {
     try {
       // Get recent transfer events
       const currentBlock = await this.provider.getBlockNumber();
-      const fromBlock = currentBlock - 5000; // Last 5000 blocks (increased to find more transactions)
+      const fromBlock = currentBlock - 300; // Reduced from 2000 to 300 blocks (~10 minutes)
       
-      // Use provider to get logs directly since contract.filters might not work
+      // Use provider to get logs directly
       const filter = {
         address: WANKR_CONTRACT_ADDRESS,
         topics: [
@@ -162,19 +162,21 @@ export class ShameFeedService extends EventEmitter {
       
       const logs = await this.provider.getLogs(filter);
       
-      console.log(`Found ${logs.length} total transfer logs in last 5000 blocks`);
-      
-                         const filteredLogs = logs.slice(-20).filter((log: any) => {
-                       const iface = new ethers.Interface([
-                           'event Transfer(address indexed from, address indexed to, uint256 value)'
-                       ]);
-                       const decoded = iface.parseLog(log);
-                       const amount = parseFloat(ethers.formatUnits(decoded?.args?.[2] || 0, 18));
-                       return amount > 0 && amount <= 1000; // Show transactions up to 1,000 WANKR (shame only)
-                   });
 
-      // Resolve handles for filtered transactions
-      this.shameHistory = await Promise.all(filteredLogs.map(async (log: any) => {
+      
+      // Filter and limit to last 20 transactions
+      const filteredLogs = logs.slice(-20).filter((log: any) => {
+        const iface = new ethers.Interface([
+          'event Transfer(address indexed from, address indexed to, uint256 value)'
+        ]);
+        const decoded = iface.parseLog(log);
+        const amount = parseFloat(ethers.formatUnits(decoded?.args?.[2] || 0, 18));
+        const roundedAmount = Math.round(amount);
+        return roundedAmount >= 1 && (roundedAmount <= 10 || roundedAmount === 69); // Show transactions >= 1 AND (≤ 10 WANKR OR exactly 69 WANKR)
+      });
+
+      // Load transactions without handle resolution initially (for performance)
+      this.shameHistory = filteredLogs.map((log: any) => {
         const iface = new ethers.Interface([
           'event Transfer(address indexed from, address indexed to, uint256 value)'
         ]);
@@ -182,29 +184,38 @@ export class ShameFeedService extends EventEmitter {
         
         const from = decoded?.args?.[0] || 'Unknown';
         const to = decoded?.args?.[1] || 'Unknown';
-        
-        // Resolve display names
-        const [fromResolution, toResolution] = await Promise.all([
-          this.handleResolver.resolveHandle(from),
-          this.handleResolver.resolveHandle(to)
-        ]);
+        const rawAmount = parseFloat(ethers.formatUnits(decoded?.args?.[2] || 0, 18));
+        const roundedAmount = Math.round(rawAmount);
         
         return {
           from,
           to,
-          amount: ethers.formatUnits(decoded?.args?.[2] || 0, 18),
+          amount: roundedAmount.toString(), // Use rounded amount for display
           timestamp: Math.floor(Date.now() / 1000), // Approximate
           reason: '',
           transactionHash: log.transactionHash,
           blockNumber: log.blockNumber,
-          fromDisplayName: fromResolution.displayName,
-          toDisplayName: toResolution.displayName,
-          fromSource: fromResolution.source,
-          toSource: toResolution.source
+          fromDisplayName: this.shortenAddress(from),
+          toDisplayName: this.shortenAddress(to),
+          fromSource: 'shortened' as const,
+          toSource: 'shortened' as const
         };
-      }));
+      });
 
-      console.log(`Loaded ${this.shameHistory.length} recent transfers`);
+      // Now resolve handles for the loaded transactions
+
+      for (const transaction of this.shameHistory) {
+        // Provide immediate fallbacks
+        transaction.fromDisplayName = this.shortenAddress(transaction.from);
+        transaction.toDisplayName = this.shortenAddress(transaction.to);
+        transaction.fromSource = 'shortened';
+        transaction.toSource = 'shortened';
+        
+        // Process handle resolution in background (non-blocking)
+        this.resolveHandlesInBackground(transaction);
+      }
+
+
     } catch (error) {
       console.error('Error loading recent transfers:', error);
       this.shameHistory = [];
@@ -212,260 +223,78 @@ export class ShameFeedService extends EventEmitter {
   }
 
   /**
-   * Monitor contract events in real-time
+   * Start polling for new transactions
    */
-  private monitorEvents() {
-    try {
-      // Check if contract has custom events
-      const hasCustomEvents = this.contract.interface.hasEvent('ShameDelivered');
-      
-      if (hasCustomEvents) {
-        this.monitorCustomEvents();
-      } else {
-        this.monitorTransferEvents();
-      }
-    } catch (error) {
-      console.log('Falling back to transfer event monitoring');
-      this.monitorTransferEvents();
+  private startPolling() {
+    // Clear any existing interval
+    if (this.pollingInterval) {
+      clearInterval(this.pollingInterval);
     }
-  }
 
-  /**
-   * Monitor events with error handling and retry logic
-   */
-  private monitorEventsWithRetry() {
-    const maxRetries = 3;
-    let retryCount = 0;
-
-    const attemptMonitoring = () => {
-      try {
-        this.monitorEvents();
-        retryCount = 0; // Reset on success
-      } catch (error) {
-        retryCount++;
-        console.error(`Event monitoring attempt ${retryCount} failed:`, error);
-        
-        if (retryCount < maxRetries) {
-          console.log(`Retrying event monitoring in 5 seconds... (${retryCount}/${maxRetries})`);
-          setTimeout(attemptMonitoring, 5000);
-        } else {
-          console.log('Max retries reached, falling back to polling only');
-          this.fallbackToPollingOnly();
-        }
-      }
-    };
-
-    attemptMonitoring();
-  }
-
-  /**
-   * Monitor custom shame events
-   */
-  private monitorCustomEvents() {
-    // Listen for ShameDelivered events
-    this.contract.on('ShameDelivered', async (from: string, to: string, amount: bigint, reason: string, event: any) => {
-      if (!this.isMonitoring) return;
-
-      const shameTx: ShameTransaction = {
-        from,
-        to,
-        amount: ethers.formatUnits(amount, 18),
-        timestamp: Math.floor(Date.now() / 1000),
-        reason,
-        transactionHash: event.transactionHash,
-        blockNumber: event.blockNumber
-      };
-
-      this.addShameTransaction(shameTx);
-      console.log(`🎭 New shame delivered: ${from} → ${to} (${shameTx.amount} WANKR)`);
-    });
-
-    // Listen for ShameSoldierRanked events
-    this.contract.on('ShameSoldierRanked', async (soldier: string, totalShameDelivered: bigint, rank: bigint) => {
-      if (!this.isMonitoring) return;
-      await this.updateLeaderboard();
-      console.log(`🏆 Shame soldier ranked: ${soldier} at rank ${rank}`);
-    });
-
-    // Listen for SpectralJudgment events
-    this.contract.on('SpectralJudgment', async (target: string, judgment: number, reason: string) => {
-      if (!this.isMonitoring) return;
-      this.updateShameJudgment(target, judgment);
-      console.log(`⚖️ Spectral judgment: ${target} rated ${judgment}/10`);
-    });
-  }
-
-  /**
-   * Monitor basic transfer events as fallback
-   */
-  private monitorTransferEvents() {
-    try {
-      this.contract.on('Transfer', async (from: string, to: string, amount: bigint, event: any) => {
-        if (!this.isMonitoring) return;
-        
-        // Skip zero address transfers (minting/burning)
-        if (from === ethers.ZeroAddress || to === ethers.ZeroAddress) return;
-
-        const shameTx: ShameTransaction = {
-          from,
-          to,
-          amount: ethers.formatUnits(amount, 18),
-          timestamp: Math.floor(Date.now() / 1000),
-          reason: 'Transfer detected',
-          transactionHash: event.transactionHash,
-          blockNumber: event.blockNumber
-        };
-
-        await this.addShameTransaction(shameTx);
-        console.log(`💸 New transfer: ${from} → ${to} (${shameTx.amount} WANKR)`);
-      });
-    } catch (error) {
-      console.error('Error setting up transfer event monitoring:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Fallback to polling only when event monitoring fails
-   */
-  private fallbackToPollingOnly() {
-    console.log('🔄 Switching to polling-only mode');
-    this.isMonitoring = true;
-    
-    // Increase polling frequency when events fail
-    this.startPollingOnly();
-  }
-
-  /**
-   * Start polling-only mode with higher frequency
-   */
-  private startPollingOnly() {
-    // Poll every 10 seconds instead of 30
-    setInterval(async () => {
+    // Poll every 60 seconds
+    this.pollingInterval = setInterval(async () => {
       if (!this.isMonitoring) return;
 
       try {
         await this.checkForNewTransactions();
       } catch (error) {
-        console.error('Error in polling-only mode:', error);
+        console.error('Error in polling:', error);
       }
-    }, 60000); // Changed from 10 seconds to 60 seconds (1 minute) to help with rate limiting
+    }, 60000); // 60 seconds
   }
 
   /**
    * Add shame transaction to history
    */
   private async addShameTransaction(shameTx: ShameTransaction) {
-    // Only add transactions of 1000 WANKR or less (filter out traders)
+    // Only add transactions >= 1 AND (≤ 10 WANKR OR exactly 69 WANKR) (filter out traders and decimal amounts)
     const amount = parseFloat(shameTx.amount);
-    if (amount > 1000) {
-      console.log(`🚫 Filtered out large transaction: ${shameTx.amount} WANKR (${shameTx.from} → ${shameTx.to})`);
+    const roundedAmount = Math.round(amount);
+    if (roundedAmount < 1 || (roundedAmount > 10 && roundedAmount !== 69)) {
+      
       return;
     }
     
     // Skip zero-amount transactions (not real shame deliveries)
     if (amount === 0) {
-      console.log(`🚫 Filtered out zero-amount transaction: ${shameTx.from} → ${shameTx.to}`);
+      
       return;
     }
 
-    // Resolve wallet addresses to display names
-    try {
-      const [fromResolution, toResolution] = await Promise.all([
-        this.handleResolver.resolveHandle(shameTx.from),
-        this.handleResolver.resolveHandle(shameTx.to)
-      ]);
+    // Check if we already have this transaction
+    const exists = this.shameHistory.find(existing => 
+      existing.transactionHash === shameTx.transactionHash
+    );
 
-      // Add resolved display names to the transaction
+    if (exists) {
+      
+      return;
+    }
+
+    // Resolve wallet addresses to display names (only for new transactions)
+    try {
+      // Provide immediate fallbacks first
       const enrichedShameTx = {
         ...shameTx,
-        fromDisplayName: fromResolution.displayName,
-        toDisplayName: toResolution.displayName,
-        fromSource: fromResolution.source,
-        toSource: toResolution.source
+        fromDisplayName: this.shortenAddress(shameTx.from),
+        toDisplayName: this.shortenAddress(shameTx.to),
+        fromSource: 'shortened' as const,
+        toSource: 'shortened' as const
       };
 
-      // Add to history
+      // Add to history immediately
       this.shameHistory.unshift(enrichedShameTx);
       if (this.shameHistory.length > 100) {
         this.shameHistory = this.shameHistory.slice(0, 100);
       }
 
-      // Emit events
-      this.emit('newShame', enrichedShameTx);
-      this.emit('shameHistoryUpdate', this.shameHistory);
+      // Emit the new transaction immediately
+      this.emit('newShameTransaction', enrichedShameTx);
+
+      // Process handle resolution in background (non-blocking)
+      this.resolveHandlesInBackground(enrichedShameTx);
     } catch (error) {
-      console.error('Error resolving wallet handles:', error);
-      
-      // Fallback: add without display names
-      this.shameHistory.unshift(shameTx);
-      if (this.shameHistory.length > 100) {
-        this.shameHistory = this.shameHistory.slice(0, 100);
-      }
-
-      this.emit('newShame', shameTx);
-      this.emit('shameHistoryUpdate', this.shameHistory);
-    }
-  }
-
-  /**
-   * Update shame judgment
-   */
-  private updateShameJudgment(target: string, judgment: number) {
-    const recentShame = this.shameHistory.find(tx => tx.to.toLowerCase() === target.toLowerCase());
-    if (recentShame) {
-      recentShame.judgment = judgment;
-      this.emit('shameHistoryUpdate', this.shameHistory);
-    }
-  }
-
-  /**
-   * Polling as backup method
-   */
-  private startPolling() {
-    setInterval(async () => {
-      if (!this.isMonitoring) return;
-
-      try {
-        const currentBlock = await this.provider.getBlockNumber();
-        
-        // Check for new blocks
-        if (currentBlock > this.lastProcessedBlock) {
-          await this.checkForNewTransactions();
-          this.lastProcessedBlock = currentBlock;
-        }
-      } catch (error) {
-        console.error('Error in polling:', error);
-        // If polling fails, try to restart event monitoring
-        this.restartEventMonitoring();
-      }
-    }, 30000); // Poll every 30 seconds
-  }
-
-  /**
-   * Restart event monitoring if it fails
-   */
-  private restartEventMonitoring() {
-    try {
-      console.log('Restarting event monitoring...');
-      this.contract.removeAllListeners();
-      this.monitorEvents();
-    } catch (error) {
-      console.error('Failed to restart event monitoring:', error);
-      // If restart fails, switch to polling only
-      this.fallbackToPollingOnly();
-    }
-  }
-
-  /**
-   * Handle filter errors gracefully
-   */
-  private handleFilterError(error: any) {
-    if (error?.error?.message === 'filter not found') {
-      console.log('🔄 Filter expired, restarting event monitoring...');
-      this.restartEventMonitoring();
-    } else {
-      console.error('Event monitoring error:', error);
+      console.error(`❌ Error processing shame transaction: ${shameTx.transactionHash}`, error);
     }
   }
 
@@ -506,16 +335,7 @@ export class ShameFeedService extends EventEmitter {
           reason: tx.reason
         };
 
-        // Check if we already have this transaction
-        const exists = this.shameHistory.find(existing => 
-          existing.from === shameTx.from && 
-          existing.to === shameTx.to && 
-          existing.timestamp === shameTx.timestamp
-        );
-
-        if (!exists) {
-          await this.addShameTransaction(shameTx);
-        }
+        await this.addShameTransaction(shameTx);
       }
     } catch (error) {
       console.error('Error checking custom transactions:', error);
@@ -558,35 +378,25 @@ export class ShameFeedService extends EventEmitter {
         // Skip zero address transfers
         if (from === ethers.ZeroAddress || to === ethers.ZeroAddress) continue;
 
-        // Skip large transactions (over 1000 WANKR) and zero amounts
+        // Skip decimal-amount and large transactions (over 10 WANKR, except 69) and decimal amounts
         const amount = parseFloat(ethers.formatUnits(value, 18));
-        if (amount > 1000) {
-          console.log(`🚫 Filtered out large transaction: ${amount} WANKR (${from} → ${to})`);
-          continue;
-        }
-        if (amount === 0) {
-          console.log(`🚫 Filtered out zero-amount transaction: ${from} → ${to}`);
+        const roundedAmount = Math.round(amount);
+        if (roundedAmount < 1 || (roundedAmount > 10 && roundedAmount !== 69)) {
+  
           continue;
         }
 
-                               const shameTx: ShameTransaction = {
-                         from,
-                         to,
-                         amount: ethers.formatUnits(value, 18),
-                         timestamp: Math.floor(Date.now() / 1000),
-                         reason: '',
-                         transactionHash: log.transactionHash,
-                         blockNumber: log.blockNumber
-                       };
+        const shameTx: ShameTransaction = {
+          from,
+          to,
+          amount: roundedAmount.toString(), // Use rounded amount for display
+          timestamp: Math.floor(Date.now() / 1000),
+          reason: '',
+          transactionHash: log.transactionHash,
+          blockNumber: log.blockNumber
+        };
 
-        // Check if we already have this transaction
-        const exists = this.shameHistory.find(existing => 
-          existing.transactionHash === shameTx.transactionHash
-        );
-
-        if (!exists) {
-          await this.addShameTransaction(shameTx);
-        }
+        await this.addShameTransaction(shameTx);
       }
       
       this.lastProcessedBlock = currentBlock;
@@ -622,6 +432,45 @@ export class ShameFeedService extends EventEmitter {
   }
 
   /**
+   * Refresh shame history with resolved handles
+   */
+  async refreshShameHistoryWithHandles(): Promise<ShameTransaction[]> {
+    try {
+      // Get all unique addresses from current transactions
+      const addresses = new Set<string>();
+      this.shameHistory.forEach(tx => {
+        addresses.add(tx.from.toLowerCase());
+        addresses.add(tx.to.toLowerCase());
+      });
+
+      // Bulk resolve all addresses
+      const resolutions = await this.handleResolver.resolveHandlesBulk(Array.from(addresses));
+
+      // Update all transactions with resolved handles
+      this.shameHistory.forEach(tx => {
+        const fromResolution = resolutions[tx.from.toLowerCase()];
+        const toResolution = resolutions[tx.to.toLowerCase()];
+
+        if (fromResolution) {
+          tx.fromDisplayName = fromResolution.displayName;
+          tx.fromSource = fromResolution.source;
+        }
+
+        if (toResolution) {
+          tx.toDisplayName = toResolution.displayName;
+          tx.toSource = toResolution.source;
+        }
+      });
+
+      console.log(`✅ Refreshed ${this.shameHistory.length} transactions with handle resolutions`);
+      return this.shameHistory;
+    } catch (error) {
+      console.error('❌ Error refreshing shame history with handles:', error);
+      return this.shameHistory;
+    }
+  }
+
+  /**
    * Get current top soldiers
    */
   getTopSoldiers(): ShameSoldier[] {
@@ -638,8 +487,8 @@ export class ShameFeedService extends EventEmitter {
     const uniqueShamed = new Set(this.shameHistory.map(tx => tx.to)).size;
 
     return {
-      totalShames,
-      totalAmount: totalAmount.toFixed(2),
+      totalTransactions: totalShames, // Changed from totalShames to totalTransactions
+      totalShameDelivered: Math.floor(totalAmount), // Changed to whole integer
       uniqueShamers,
       uniqueShamed,
       averageJudgment: this.shameHistory
@@ -647,5 +496,47 @@ export class ShameFeedService extends EventEmitter {
         .reduce((sum, tx) => sum + (tx.judgment || 0), 0) / 
         this.shameHistory.filter(tx => tx.judgment).length || 0
     };
+  }
+
+  /**
+   * Helper method to shorten addresses
+   */
+  private shortenAddress(address: string): string {
+    return `${address.slice(0, 6)}...${address.slice(-4)}`;
+  }
+
+  /**
+   * Background process to resolve handles for transactions
+   */
+  private async resolveHandlesInBackground(transaction: ShameTransaction) {
+    try {
+      // Use handleResolver which handles the entire flow (cache → register → BNS → Farcaster → shortened)
+      const [fromResolution, toResolution] = await Promise.all([
+        this.handleResolver.resolveHandle(transaction.from),
+        this.handleResolver.resolveHandle(transaction.to)
+      ]);
+
+      // Update the transaction with resolved handles
+      transaction.fromDisplayName = fromResolution.displayName;
+      transaction.toDisplayName = toResolution.displayName;
+      transaction.fromSource = fromResolution.source;
+      transaction.toSource = toResolution.source;
+
+      console.log(`✅ Handles resolved for tx ${transaction.transactionHash}:`);
+      console.log(`   From: ${transaction.from} → ${fromResolution.displayName} (${fromResolution.source})`);
+      console.log(`   To: ${transaction.to} → ${toResolution.displayName} (${toResolution.source})`);
+
+      // Emit an event to update the UI with the resolved handle
+      this.emit('handleResolutionUpdate', transaction);
+      
+    } catch (error) {
+      console.error(`❌ Background handle resolution failed for: ${transaction.transactionHash}`, error);
+      // Keep the fallback values
+      transaction.fromDisplayName = this.shortenAddress(transaction.from);
+      transaction.toDisplayName = this.shortenAddress(transaction.to);
+      transaction.fromSource = 'shortened';
+      transaction.toSource = 'shortened';
+      this.emit('handleResolutionUpdate', transaction);
+    }
   }
 }
