@@ -1,0 +1,14 @@
+{
+  "name": "@repo/wankr-ui",
+  "description": "WANKR Protocol UI Components - Built for maximum shame distribution",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "shame": "echo '🎨 WANKR UI - Styling shame since 2025 🎨'"
+  },
+  "keywords": [
+    "wankr",
+    "ui-components",
+    "proof-of-shame"
+  ]
+}

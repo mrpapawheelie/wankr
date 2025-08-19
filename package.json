@@ -1,0 +1,28 @@
+{
+  "name": "wankr",
+  "description": "The Unholy Birth of WANKR GYATT - Base chain's least expected antihero. Proof of Shame protocol.",
+  "private": true,
+  "scripts": {
+    "shame": "echo '🚀 WANKR - The Dark Mirror of the Base Chain 🚀'",
+    "dev": "cd frontend && pnpm run dev",
+    "build": "cd frontend && pnpm run build",
+    "frontend:dev": "cd frontend && pnpm run dev",
+    "frontend:build": "cd frontend && pnpm run build"
+  },
+  "packageManager": "pnpm@9.0.0",
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "wankr",
+    "gyatt",
+    "proof-of-shame",
+    "pos",
+    "base-chain",
+    "memecoin",
+    "defi",
+    "blockchain"
+  ],
+  "author": "WANKR GYATT",
+  "license": "MIT"
+}
