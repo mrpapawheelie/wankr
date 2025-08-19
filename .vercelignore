@@ -1,11 +1,8 @@
-# Exclude everything except frontend
-*
-!frontend/
-!vercel.json
-!package.json
-!pnpm-workspace.yaml
+# Exclude build artifacts and dependencies
+.next/
+node_modules/
+.env*
 
-# Exclude frontend build artifacts
-frontend/.next/
-frontend/node_modules/
-frontend/.env*
+# Exclude unnecessary files
+*.log
+.DS_Store
