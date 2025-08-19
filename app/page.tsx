@@ -10,7 +10,7 @@ export default function Hero() {
         <ThemeToggle />
       </div>
 
-      {/* gradient blobs, optional */}
+      {/* soft gradient blobs (optional, keep or remove) */}
       <div className="pointer-events-none absolute inset-0 opacity-25">
         <div className="absolute -top-24 -left-24 h-80 w-80 rounded-full blur-3xl"
              style={{background:'radial-gradient(circle,#F06BF2,transparent 60%)'}} />
@@ -19,33 +19,35 @@ export default function Hero() {
       </div>
 
       <section className="w-full max-w-6xl mx-auto px-4 pt-28 pb-20 md:pt-40 md:pb-32">
-        {/* Header content */}
-        <header className="flex flex-col items-center justify-center gap-6">
-          {/* Logo (contains WANKR word already) */}
-          <div className="w-[70vw] md:w-auto flex justify-center">
-            <Logo className="mx-auto scale-100 md:scale-125" size="xxl" />
+        {/* HEADER: Desktop = Logo + WANKR on one line; Mobile = stacked */}
+        <header className="flex flex-col items-center justify-center gap-4 md:gap-6">
+          {/* Logo */}
+          <div className="w-[80vw] md:w-auto flex justify-center">
+            <Logo className="mx-auto scale-00 md:scale-125" size="xxl" />
           </div>
+        </header>
 
-          {/* Shame. */}
+        {/* Big 'Shame.' line below header on all breakpoints */}
+        <div className="mt-6 md:mt-10 flex flex-col items-center text-center">
           <h2
             className="
-              text-white leading-none tracking-tight text-center
-              w-[70vw] md:w-full
+              text-white leading-none tracking-tight
+              w-[80vw] md:w-full
               text-5xl sm:text-6xl md:text-8xl lg:text-[10vw]
               font-extrabold
             "
           >
             Shame.
           </h2>
-        </header>
 
-        {/* Optional tagline */}
-        <p className="mt-6 text-foreground/90 w-[70vw] md:w-[42rem] mx-auto text-center text-base sm:text-lg md:text-xl">
-          $WANKR is the world&apos;s first Shame-as-a-Service token.
-        </p>
+          {/* Optional subhead; remove if you don't want any copy here */}
+          <p className="mt-4 md:mt-6 text-foreground/90 w-[80vw] md:w-[42rem] text-base sm:text-lg md:text-xl">
+            $WANKR is the world&apos;s first Shame-as-a-Service token.
+          </p>
+        </div>
 
         {/* CTAs */}
-        <div className="mt-10 flex flex-col items-center justify-center gap-4 w-[70vw] md:w-auto mx-auto md:flex-row md:gap-8">
+        <div className="mt-10 md:mt-12 flex flex-col items-center justify-center gap-4 w-[80vw] md:w-auto mx-auto md:flex-row md:gap-8">
           <Button
             asChild
             size="lg"
