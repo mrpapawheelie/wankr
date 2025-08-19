@@ -19,7 +19,7 @@ export default function Hero() {
       </div>
 
       {/* Header Section */}
-      <header className="flex-shrink-0 pt-4 md:py-8 px-4 md:px-6">
+      <header className="flex-shrink-0 pt-4 md:py-4 px-4 md:px-6">
         <div className="max-w-6xl mx-auto flex justify-center">
           <Logo size="xl" />
         </div>
