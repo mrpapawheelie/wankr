@@ -49,7 +49,7 @@ export default function Hero() {
 
           {/* Subhead */}
           <p className="text-base sm:text-lg md:text-2xl text-foreground/90 max-w-[38rem]">
-            The world's first Shame-as-a-Service token.
+            The world’s first Shame-as-a-Service token.
           </p>
         </div>
 
