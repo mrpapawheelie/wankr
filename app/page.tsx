@@ -21,7 +21,7 @@ export default function Hero() {
       {/* Main Content */}
       <section className="w-full max-w-6xl mx-auto px-4 pt-32 pb-20 text-center md:px-6 md:pt-48 md:pb-40">
         {/* ALWAYS STACKED, CENTERED — sizes scale up on md+ */}
-        <div className="flex flex-row md:flex-col items-center justify-center gap-6 md:gap-8">
+        <div className="flex flex-col items-center justify-center gap-6 md:gap-8">
           {/* Logo */}
           <div className="mb-2 md:mb-0">
             {/* make the logo big on md+ */}
@@ -36,20 +36,12 @@ export default function Hero() {
               leading-none
             "
           >
-            <span
-              className="bg-clip-text text-transparent"
-              style={{
-                background:
-                  "linear-gradient(90deg,#F06BF2 0%,#7630D9 50%,#79F2E6 100%)",
-              }}
-            >
-              WANKR
-            </span>
+            Shame.
           </h1>
 
           {/* Subhead */}
           <p className="text-base sm:text-lg md:text-2xl text-foreground/90 max-w-[38rem]">
-            The world’s first Shame-as-a-Service token.
+            $WANKR is the world’s first Shame-as-a-Service token.
           </p>
         </div>
 
