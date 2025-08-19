@@ -21,7 +21,7 @@ export default function Hero() {
       {/* Main Content */}
       <section className="w-full max-w-6xl mx-auto px-4 pt-32 pb-20 text-center md:px-6 md:pt-48 md:pb-40">
         {/* ALWAYS STACKED, CENTERED — sizes scale up on md+ */}
-        <div className="flex flex-col items-center justify-center gap-6 md:gap-8">
+        <div className="flex flex-row md:flex-col items-center justify-center gap-6 md:gap-8">
           {/* Logo */}
           <div className="mb-2 md:mb-0">
             {/* make the logo big on md+ */}
