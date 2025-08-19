@@ -19,7 +19,7 @@ export default function Hero() {
       </div>
 
       {/* Header Section */}
-      <header className="flex-shrink-0 py-3 md:py-8 px-4 md:px-6">
+      <header className="flex-shrink-0 md:py-8 px-4 md:px-6">
         <div className="max-w-6xl mx-auto flex justify-center">
           <Logo size="xl" />
         </div>
@@ -37,7 +37,7 @@ export default function Hero() {
             
             {/* Subhead */}
             <p className="text-lg sm:text-xl md:text-3xl lg:text-4xl text-foreground/90 max-w-3xl mx-auto leading-relaxed">
-              $WANKR is the world&apos;s first Shame-as-a-Service token.
+              $WANKR is the world&apos;s first<br /> Shame-as-a-Service token.
             </p>
           </div>
 
