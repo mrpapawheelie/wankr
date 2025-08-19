@@ -21,8 +21,7 @@ export default function Hero() {
       {/* Header Section */}
       <header className="flex-shrink-0 py-3 md:py-8 px-4 md:px-6">
         <div className="max-w-6xl mx-auto flex justify-center">
-          <Logo size="lg" className="md:hidden" />
-          <Logo size="xl" className="hidden md:block" />
+          <Logo size="xl" />
         </div>
       </header>
 
