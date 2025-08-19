@@ -37,7 +37,7 @@ export default function Hero() {
             </h1>
             
             {/* Subhead */}
-            <p className="text-xl sm:text-2xl md:text-2xl lg:text-3xl text-foreground/90 max-w-2xl mx-auto">
+            <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-foreground/90 max-w-3xl mx-auto leading-relaxed">
               $WANKR is the world&apos;s first Shame-as-a-Service token.
             </p>
           </div>
