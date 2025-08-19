@@ -19,19 +19,19 @@ export default function Hero() {
       </div>
 
       {/* Header Section */}
-      <header className="flex-shrink-0 pt-4 md:py-4 px-4 md:px-6">
+      <header className="flex-shrink-0 pt-2 md:py-4 px-4 md:px-6">
         <div className="max-w-6xl mx-auto flex justify-center">
           <Logo size="xl" />
         </div>
       </header>
 
       {/* Main Content Section - Centered */}
-      <section className="flex-1 flex flex-col items-center justify-center px-4 md:px-6 -mt-8 md:mt-0">
+      <section className="flex-1 flex flex-col items-center justify-center px-4 md:px-6 -mt-16 md:mt-0">
         <div className="max-w-6xl w-full text-center">
           {/* Hero Content */}
           <div className="mb-6 md:mb-16">
             {/* Main Headline */}
-            <h1 className="font-extrabold tracking-tight text-7xl sm:text-8xl md:text-8xl lg:text-[12vw] leading-none mb-3 md:mb-2">
+            <h1 className="font-extrabold tracking-tight text-8xl sm:text-9xl md:text-8xl lg:text-[12vw] leading-none mb-3 md:mb-2">
               Shame.
             </h1>
             
@@ -46,7 +46,7 @@ export default function Hero() {
             <Button
               asChild
               size="lg"
-              className="w-full sm:w-auto h-12 sm:h-14 px-6 sm:px-8 text-base sm:text-lg font-bold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
+              className="w-full sm:w-auto h-16 sm:h-14 px-6 sm:px-8 text-base sm:text-lg font-bold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
               style={{ background: "linear-gradient(135deg,#7630D9 0%,#04588C 100%)" }}
             >
               <a
@@ -60,7 +60,7 @@ export default function Hero() {
               asChild
               variant="secondary"
               size="lg"
-              className="w-full sm:w-auto h-12 sm:h-14 px-6 sm:px-8 text-base sm:text-lg font-bold rounded-lg border border-foreground bg-transparent text-foreground hover:bg-foreground hover:text-background transition-all duration-300"
+              className="w-full sm:w-auto h-16 sm:h-14 px-6 sm:px-8 text-base sm:text-lg font-bold rounded-lg border border-foreground bg-transparent text-foreground hover:bg-foreground hover:text-background transition-all duration-300"
             >
               <a target="_blank" href="https://swap.cow.fi/#/8453/swap/ETH/Wankr">
                 BUY $WANKR
