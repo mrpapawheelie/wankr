@@ -4,7 +4,7 @@ import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 export default function Hero() {
   return (
-    <main className="h-screen bg-background text-foreground relative overflow-hidden flex flex-col">
+    <main className="h-[100dvh] md:h-screen bg-background text-foreground relative overflow-hidden flex flex-col">
       {/* Theme Toggle */}
       <div className="absolute bottom-4 right-4 z-50">
         <ThemeToggle />
@@ -71,7 +71,7 @@ export default function Hero() {
       </section>
 
       {/* Footer Section */}
-      <footer className="flex-shrink-0 py-2 md:py-8 px-4 md:px-6">
+      <footer className="flex-shrink-0 py-1 md:py-8 px-4 md:px-6">
         <div className="max-w-6xl mx-auto flex justify-center">
           <a
             href="https://x.com/wankergyatt"
