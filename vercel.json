@@ -2,5 +2,6 @@
   "buildCommand": "cd frontend && pnpm install && pnpm run build",
   "outputDirectory": "frontend/.next",
   "installCommand": "cd frontend && pnpm install",
-  "framework": "nextjs"
+  "framework": "nextjs",
+  "packageManager": "pnpm@9.0.0"
 }
