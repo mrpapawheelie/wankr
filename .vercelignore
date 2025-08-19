@@ -1,15 +1,6 @@
-# Exclude everything except what's needed for frontend build
-*
-!frontend/
-!vercel.json
-!package.json
-!pnpm-workspace.yaml
-
-# Exclude frontend build artifacts and dependencies
-frontend/.next/
-frontend/node_modules/
-frontend/.env*
-
-# Exclude other unnecessary files
+# Exclude git and build artifacts
+.git/
+.next/
+node_modules/
 *.log
 .DS_Store
