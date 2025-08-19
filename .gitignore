@@ -109,3 +109,4 @@ cache/
 # Coverage
 coverage/
 coverage.json
+.vercel

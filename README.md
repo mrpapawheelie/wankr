@@ -120,6 +120,7 @@ There is no DAO. Only shame. Only WANKR.
 - **Discord**: Coming Soon
 - **Dune Dashboard**: [WANKR Watch](https://dune.com/mrpapawheelie/wankr-watch) (Proof of Shame tracking)
 - **X Thread**: [BankrBot Creates WANKR](https://x.com/bankrbot/status/1952905227457446027)
+- **Fee Transparency**: [Splits.org](https://app.splits.org/accounts/0x6B80f7221D9Dd0864f314e59E053455b05c43401/?chainId=8453) (Complete fee distribution)
 
 ## 📊 Tokenomics
 
@@ -130,6 +131,12 @@ There is no DAO. Only shame. Only WANKR.
 - **Vesting Schedule**: TBA (instant gratification for instant shame)
 - **Allocation**: TBA (mostly to people who need it most)
 - **Standard Send**: 10 $WANKR (the perfect shame amount)
+
+## 💸 Fee Transparency
+
+**WANKR believes in full transparency** - because even shame should be honest. View the complete fee distribution and splits on [Splits.org](https://app.splits.org/accounts/0x6B80f7221D9Dd0864f314e59E053455b05c43401/?chainId=8453).
+
+*No hidden fees, no surprises. Just pure, transparent shame.*
 
 ## 🤝 Contributing
 
