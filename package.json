@@ -5,9 +5,11 @@
   "scripts": {
     "shame": "echo '🚀 WANKR - The Dark Mirror of the Base Chain 🚀'",
     "dev": "cd frontend && pnpm run dev",
-    "build": "cd frontend && pnpm run build",
+    "build": "cd frontend && pnpm install && pnpm run build",
+    "start": "cd frontend && pnpm run start",
     "frontend:dev": "cd frontend && pnpm run dev",
-    "frontend:build": "cd frontend && pnpm run build"
+    "frontend:build": "cd frontend && pnpm run build",
+    "frontend:start": "cd frontend && pnpm run start"
   },
   "packageManager": "pnpm@9.0.0",
   "engines": {

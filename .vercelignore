@@ -1,0 +1,11 @@
+# Exclude everything except frontend
+*
+!frontend/
+!vercel.json
+!package.json
+!pnpm-workspace.yaml
+
+# Exclude frontend build artifacts
+frontend/.next/
+frontend/node_modules/
+frontend/.env*
