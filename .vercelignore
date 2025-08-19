@@ -4,3 +4,8 @@
 node_modules/
 *.log
 .DS_Store
+
+# Keep workspace files for Turborepo
+!pnpm-workspace.yaml
+!package.json
+!turbo.json
