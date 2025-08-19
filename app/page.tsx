@@ -19,9 +19,10 @@ export default function Hero() {
       </div>
 
       {/* Header Section */}
-      <header className="flex-shrink-0 py-8 px-4 md:px-6">
+      <header className="flex-shrink-0 py-4 md:py-8 px-4 md:px-6">
         <div className="max-w-6xl mx-auto flex justify-center">
-          <Logo size="xl" />
+          <Logo size="lg" className="md:hidden" />
+          <Logo size="xl" className="hidden md:block" />
         </div>
       </header>
 
@@ -29,24 +30,24 @@ export default function Hero() {
       <section className="flex-1 flex flex-col items-center justify-center px-4 md:px-6">
         <div className="max-w-6xl w-full text-center">
           {/* Hero Content */}
-          <div className="mb-16">
+          <div className="mb-8 md:mb-16">
             {/* Main Headline */}
-            <h1 className="font-extrabold tracking-tight text-6xl sm:text-7xl md:text-8xl lg:text-[12vw] leading-none mb-6">
+            <h1 className="font-extrabold tracking-tight text-8xl sm:text-9xl md:text-8xl lg:text-[12vw] leading-none mb-4 md:mb-6">
               Shame.
             </h1>
             
             {/* Subhead */}
-            <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-foreground/90 max-w-2xl mx-auto">
+            <p className="text-xl sm:text-2xl md:text-2xl lg:text-3xl text-foreground/90 max-w-2xl mx-auto">
               $WANKR is the world&apos;s first Shame-as-a-Service token.
             </p>
           </div>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6">
             <Button
               asChild
               size="lg"
-              className="w-full sm:w-auto h-14 px-8 text-lg font-bold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
+              className="w-full sm:w-auto h-12 sm:h-14 px-6 sm:px-8 text-base sm:text-lg font-bold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
               style={{ background: "linear-gradient(135deg,#7630D9 0%,#04588C 100%)" }}
             >
               <a
@@ -60,7 +61,7 @@ export default function Hero() {
               asChild
               variant="secondary"
               size="lg"
-              className="w-full sm:w-auto h-14 px-8 text-lg font-bold rounded-lg border border-foreground bg-transparent text-foreground hover:bg-foreground hover:text-background transition-all duration-300"
+              className="w-full sm:w-auto h-12 sm:h-14 px-6 sm:px-8 text-base sm:text-lg font-bold rounded-lg border border-foreground bg-transparent text-foreground hover:bg-foreground hover:text-background transition-all duration-300"
             >
               <a target="_blank" href="https://swap.cow.fi/#/8453/swap/ETH/Wankr">
                 BUY $WANKR
@@ -71,7 +72,7 @@ export default function Hero() {
       </section>
 
       {/* Footer Section */}
-      <footer className="flex-shrink-0 py-8 px-4 md:px-6">
+      <footer className="flex-shrink-0 py-4 md:py-8 px-4 md:px-6">
         <div className="max-w-6xl mx-auto flex justify-center">
           <a
             href="https://x.com/wankergyatt"
@@ -79,10 +80,10 @@ export default function Hero() {
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-foreground/70 hover:text-foreground transition-colors duration-200"
           >
-            <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+            <svg className="w-4 h-4 sm:w-5 sm:h-5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
               <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
             </svg>
-            <span className="text-base font-medium">@wankergyatt</span>
+            <span className="text-sm sm:text-base font-medium">@wankergyatt</span>
           </a>
         </div>
       </footer>
