@@ -71,7 +71,7 @@ export default function Hero() {
       </section>
 
       {/* Footer Section */}
-      <footer className="flex-shrink-0 py-3 md:py-8 px-4 md:px-6">
+      <footer className="flex-shrink-0 py-2 md:py-8 px-4 md:px-6">
         <div className="max-w-6xl mx-auto flex justify-center">
           <a
             href="https://x.com/wankergyatt"
