@@ -6,7 +6,7 @@ export default function Hero() {
   return (
     <main className="h-screen bg-background text-foreground relative overflow-hidden flex flex-col">
       {/* Theme Toggle */}
-      <div className="absolute top-4 right-4 z-50">
+      <div className="absolute bottom-4 right-4 z-50">
         <ThemeToggle />
       </div>
 
@@ -19,7 +19,7 @@ export default function Hero() {
       </div>
 
       {/* Header Section */}
-      <header className="flex-shrink-0 md:py-8 px-4 md:px-6">
+      <header className="flex-shrink-0 pt-4 md:py-8 px-4 md:px-6">
         <div className="max-w-6xl mx-auto flex justify-center">
           <Logo size="xl" />
         </div>
