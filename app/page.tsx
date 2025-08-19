@@ -18,19 +18,25 @@ export default function Hero() {
 
       {/* Main Content - Mobile First */}
       <section className="w-full max-w-6xl mx-auto px-4 pt-32 pb-20 text-center md:px-6 md:pt-48 md:pb-40">
-        {/* Logo */}
-        <div className="mb-8 md:mb-12">
-          <Logo size="xl" className="mx-auto" />
+        {/* Hero Section - Stacked on mobile, side-by-side on desktop */}
+        <div className="flex flex-col items-center justify-center md:flex-row md:items-center md:gap-12">
+          {/* Logo */}
+          <div className="mb-8 md:mb-0">
+            <Logo size="xxl" className="mx-auto" />
+          </div>
+          
+          {/* Text Content */}
+          <div className="flex flex-col items-center md:items-start md:text-left">
+            {/* Main Headline */}
+            <h1 className="text-6xl font-extrabold tracking-tight mb-4 text-foreground md:text-8xl lg:text-[12vw] md:mb-6">
+              Shame.
+            </h1>
+            
+            <p className="text-lg text-foreground/90 mb-8 max-w-[80%] mx-auto md:text-xl lg:text-3xl md:mb-12 md:max-w-none">
+              $WANKR is the world&apos;s first Shame-as-a-Service token.
+            </p>
+          </div>
         </div>
-        
-        {/* Main Headline */}
-        <h1 className="text-6xl font-extrabold tracking-tight mb-4 text-foreground md:text-8xl lg:text-[14vw] md:mb-6">
-          Shame.
-        </h1>
-        
-        <p className="text-lg text-foreground/90 mb-8 max-w-[80%] mx-auto md:text-xl lg:text-3xl md:mb-12">
-          $WANKR is the world&apos;s first Shame-as-a-Service token.
-        </p>
 
         {/* CTA Buttons - Stacked on mobile, row on desktop */}
         <div className="flex flex-col items-center justify-center gap-4 w-full max-w-[80%] mx-auto md:flex-row md:gap-8">
