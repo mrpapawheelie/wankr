@@ -99,7 +99,6 @@
   --sidebar: 0 0% 16%;
   --sidebar-foreground: 0 0% 100%;
   --sidebar-primary: 262 64% 52%;
-  --sidebar-primary-foreground: 0 0% 100%;
   --sidebar-accent: 0 0% 16%;
   --sidebar-accent-foreground: 0 0% 100%;
   --sidebar-border: 207 95% 28%;
@@ -114,6 +113,26 @@
 body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
+}
+
+/* Mobile-first responsive utilities */
+@media (max-width: 640px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  /* Ensure text doesn't overflow on mobile */
+  h1, h2, h3, h4, h5, h6 {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  
+  /* Better button sizing on mobile */
+  button, .btn {
+    min-height: 3rem;
+    font-size: 1rem;
+  }
 }
 
 /* Basic utility classes for testing */
@@ -180,4 +199,25 @@ body {
 
 .animate-float {
   animation: float 6s ease-in-out infinite;
+}
+
+/* Mobile-specific improvements */
+@media (max-width: 640px) {
+  /* Ensure proper stacking on mobile */
+  .mobile-stack {
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+  
+  /* Better mobile spacing */
+  .mobile-spacing {
+    margin-bottom: 1.5rem !important;
+  }
+  
+  /* Mobile button improvements */
+  .mobile-button {
+    width: 100% !important;
+    max-width: 20rem !important;
+    margin: 0.5rem 0 !important;
+  }
 }
