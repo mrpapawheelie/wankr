@@ -31,12 +31,12 @@ export default function Hero() {
           {/* Hero Content */}
           <div className="mb-6 md:mb-16">
             {/* Main Headline */}
-            <h1 className="font-extrabold tracking-tight text-7xl sm:text-8xl md:text-8xl lg:text-[12vw] leading-none mb-3 md:mb-6">
+            <h1 className="font-extrabold tracking-tight text-7xl sm:text-8xl md:text-8xl lg:text-[12vw] leading-none mb-3 md:mb-2">
               Shame.
             </h1>
             
             {/* Subhead */}
-            <p className="text-xl md:text-3xl text-foreground/90 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl md:text-2xl text-center text-foreground/90 max-w-3xl mx-auto leading-relaxed">
               $WANKR is the world&apos;s first Shame-as-a-Service token.
             </p>
           </div>
