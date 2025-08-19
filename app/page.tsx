@@ -4,7 +4,7 @@ import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 export default function Hero() {
   return (
-    <main className="min-h-screen bg-background text-foreground relative overflow-hidden flex flex-col">
+    <main className="h-screen bg-background text-foreground relative overflow-hidden flex flex-col">
       {/* Theme Toggle */}
       <div className="absolute top-4 right-4 z-50">
         <ThemeToggle />
@@ -19,7 +19,7 @@ export default function Hero() {
       </div>
 
       {/* Header Section */}
-      <header className="flex-shrink-0 py-4 md:py-8 px-4 md:px-6">
+      <header className="flex-shrink-0 py-3 md:py-8 px-4 md:px-6">
         <div className="max-w-6xl mx-auto flex justify-center">
           <Logo size="lg" className="md:hidden" />
           <Logo size="xl" className="hidden md:block" />
@@ -27,17 +27,17 @@ export default function Hero() {
       </header>
 
       {/* Main Content Section - Centered */}
-      <section className="flex-1 flex flex-col items-center justify-center px-4 md:px-6">
+      <section className="flex-1 flex flex-col items-center justify-center px-4 md:px-6 -mt-8 md:mt-0">
         <div className="max-w-6xl w-full text-center">
           {/* Hero Content */}
-          <div className="mb-8 md:mb-16">
+          <div className="mb-6 md:mb-16">
             {/* Main Headline */}
-            <h1 className="font-extrabold tracking-tight text-8xl sm:text-9xl md:text-8xl lg:text-[12vw] leading-none mb-4 md:mb-6">
+            <h1 className="font-extrabold tracking-tight text-7xl sm:text-8xl md:text-8xl lg:text-[12vw] leading-none mb-3 md:mb-6">
               Shame.
             </h1>
             
             {/* Subhead */}
-            <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-foreground/90 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-lg sm:text-xl md:text-3xl lg:text-4xl text-foreground/90 max-w-3xl mx-auto leading-relaxed">
               $WANKR is the world&apos;s first Shame-as-a-Service token.
             </p>
           </div>
@@ -72,7 +72,7 @@ export default function Hero() {
       </section>
 
       {/* Footer Section */}
-      <footer className="flex-shrink-0 py-4 md:py-8 px-4 md:px-6">
+      <footer className="flex-shrink-0 py-3 md:py-8 px-4 md:px-6">
         <div className="max-w-6xl mx-auto flex justify-center">
           <a
             href="https://x.com/wankergyatt"
