@@ -1,0 +1,85 @@
+name: Validate Artwork
+
+on:
+  pull_request:
+    paths:
+      - 'Assets/**'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install Pillow
+        run: pip install pillow
+
+      - name: Validate structure and images
+        run: |
+          python - <<'PY'
+          import os, re, sys
+          from PIL import Image
+
+          ALLOWED_EXT = {'.png', '.jpg', '.jpeg'}
+          ALLOWED_RARITIES = {'common','rare','epic','legendary'}
+          HANDLE_RE = re.compile(r'^[A-Za-z0-9_-]+$')
+
+          errors = []
+
+          for root, _, files in os.walk('Assets'):
+              for fname in files:
+                  path = os.path.join(root, fname)
+                  rel = os.path.relpath(path, 'Assets')
+
+                  # Allow readme/metadata anywhere (optional)
+                  if fname.lower() in {'readme.md', '.ds_store'}:
+                      continue
+
+                  parts = rel.split(os.sep)
+
+                  # Expect Assets/<handle>/<rarity>/<filename>
+                  if len(parts) < 3:
+                      errors.append(f"Invalid placement: '{rel}' (must be Assets/<handle>/<rarity>/<file>)")
+                      continue
+
+                  handle, rarity = parts[0], parts[1]
+                  ext = os.path.splitext(fname)[1].lower()
+
+                  # Validate handle
+                  if not HANDLE_RE.match(handle):
+                      errors.append(f"Invalid handle folder '{handle}' in '{rel}'. Use only letters, numbers, '-' or '_' (no spaces, no '@').")
+
+                  # Validate rarity
+                  if rarity not in ALLOWED_RARITIES:
+                      errors.append(f"Invalid rarity folder '{rarity}' in '{rel}'. Must be one of {sorted(ALLOWED_RARITIES)}.")
+
+                  # Validate extension
+                  if ext not in ALLOWED_EXT:
+                      errors.append(f"Invalid file type for '{rel}'. Allowed: {sorted(ALLOWED_EXT)}.")
+                      continue
+
+                  # Validate image: square and min 820
+                  try:
+                      with Image.open(path) as img:
+                          w, h = img.size
+                          if w != h:
+                              errors.append(f"Image must be square: '{rel}' is {w}x{h}.")
+                          if w < 820 or h < 820:
+                              errors.append(f"Image too small: '{rel}' is {w}x{h}. Minimum is 820x820.")
+                  except Exception as e:
+                      errors.append(f"Cannot open '{rel}' as image: {e}")
+
+          if errors:
+              print("❌ Validation failed:")
+              for e in errors:
+                  print(" -", e)
+              sys.exit(1)
+          else:
+              print("✅ All checks passed: structure ok, files ok, images are square and >= 820px.")
+          PY
